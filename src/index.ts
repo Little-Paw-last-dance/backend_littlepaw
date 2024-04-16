@@ -1,6 +1,8 @@
 import express, { Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swagggerOutput from "./swagger_output.json";
 
 import { corsOptions } from "./config/corsOptions";
 import "./db/dataSource";
@@ -17,6 +19,6 @@ app.use(morgan("combined"));
 
 app.use("/api", [apiRouter]);
 
-app.listen(PORT, () => {
-  console.log("Server is running on port", PORT);
-});
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swagggerOutput));
+
+app.listen(PORT, () => console.log("Server is running on port", PORT));
