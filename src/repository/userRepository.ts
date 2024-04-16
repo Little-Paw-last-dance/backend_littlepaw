@@ -44,3 +44,8 @@ export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRun
 
     return await queryRunner.manager.save(User, user);
 }
+
+
+export const getUserByEmail = async (email: string, queryRunner: QueryRunner): Promise<User | null> => {
+    return await queryRunner.manager.findOne<User>(User, { where: { email }, relations: ["roles"] });
+}
