@@ -4,10 +4,17 @@ import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { In, QueryRunner } from "typeorm";
 import HttpException from "../exception/HttpException";
 
-export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRunner): Promise<User> => {
+export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRunner, roles: Role[]): Promise<User> => {
 
     if (userDTO.roles.includes("root")) {
         throw new HttpException("Role root is not allowed to be assigned to users", 400);
+    }
+
+    const hasAdminRole = roles.some((role) => role.roleName === "admin");
+    const isRoot = roles.some((role) => role.roleName === "root");
+
+    if (!hasAdminRole && !isRoot) {
+        throw new HttpException("Only users with admin or root role can create users", 400);
     }
 
     const rolesFound = await queryRunner.manager.find(Role, {

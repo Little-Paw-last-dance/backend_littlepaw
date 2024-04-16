@@ -1,11 +1,12 @@
 import { auth } from "../config/firebaseConfig";
 import typeORM from "../db/dataSource";
+import Role from "../entity/Roles";
 import HttpException from "../exception/HttpException";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { instanceUserResponse } from "../model/dto/userResponse";
 import { insertUser } from "../repository/userRepository";
 
-export const registerUser = async (user: UserRegisterDTO) => {
+export const registerUser = async (user: UserRegisterDTO, roles: Role[]) => {
   return new Promise((resolve, reject) => {
     auth
       .createUser({
@@ -21,7 +22,7 @@ export const registerUser = async (user: UserRegisterDTO) => {
         const queryRunner = typeORM.createQueryRunner();
         await queryRunner.startTransaction();
 
-        return insertUser(user, queryRunner)
+        return insertUser(user, queryRunner, roles)
           .then(async (userDB) => {
             await queryRunner.commitTransaction();
             resolve(instanceUserResponse(userDB));

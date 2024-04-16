@@ -6,8 +6,9 @@ import HttpException from "../exception/HttpException";
 
 export const userRegister = async (req: Request, res: Response) => {
     const userRegisterRequest: UserRegisterDTO = res.locals.user;
+    const roles = res.locals.roles;
 
-    registerUser(userRegisterRequest).then((user) => {
+    registerUser(userRegisterRequest, roles).then((user) => {
         res.status(200).json({ user });
     }).catch((error) => {
         console.error(error);
