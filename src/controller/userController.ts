@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { registerUser } from "../service/userService";
+import HttpException from "../exception/HttpException";
 
 
 export const userRegister = async (req: Request, res: Response) => {
@@ -9,6 +10,10 @@ export const userRegister = async (req: Request, res: Response) => {
     registerUser(userRegisterRequest).then((user) => {
         res.status(200).json({ user });
     }).catch((error) => {
-        res.status(500).send(error);
+        if (error instanceof HttpException) {
+            res.status(error.statusCode).json(error);
+        } else {
+            res.status(500).json({ message: "Internal error while creating user" });
+        }
     });
 };

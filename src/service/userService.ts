@@ -1,5 +1,6 @@
 import { auth } from "../config/firebaseConfig";
 import typeORM from "../db/dataSource";
+import HttpException from "../exception/HttpException";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { instanceUserResponse } from "../model/dto/userResponse";
 import { insertUser } from "../repository/userRepository";
@@ -16,9 +17,11 @@ export const registerUser = async (user: UserRegisterDTO) => {
         password: user.password,
       })
       .then(async (userRecord) => {
+
         const queryRunner = typeORM.createQueryRunner();
         await queryRunner.startTransaction();
-        insertUser(user, queryRunner)
+
+        return insertUser(user, queryRunner)
           .then(async (userDB) => {
             await queryRunner.commitTransaction();
             resolve(instanceUserResponse(userDB));
@@ -26,22 +29,24 @@ export const registerUser = async (user: UserRegisterDTO) => {
           .catch(async (error) => {
             await queryRunner.rollbackTransaction();
             auth.deleteUser(userRecord.uid);
-            console.error(error);
             if (error?.original?.code !== "ER_DUP_ENTRY") {
-              reject({ message: "Error creating user on database" });
+                console.log("Duplicate email on database");
             }
-            reject({ message: "User email already exists on database" });
+            console.log("Error creating user on database");
+            reject(new HttpException("Error creating user", 500));
           })
           .finally(async () => {
             await queryRunner.release();
           });
+
       })
       .catch((error) => {
-        console.log(error);
         if (error.code === "auth/email-already-exists") {
-          reject({ message: "User email already exists on firebase" });
+            console.log("Duplicate email on firebase");
         }
-        reject({ message: "Error creating user on firebase" });
+        console.log("Error creating user on firebase");
+        reject(new HttpException("Error creating user", 500));
       });
   });
 };
+
