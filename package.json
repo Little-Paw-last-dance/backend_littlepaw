@@ -16,14 +16,18 @@
     "url": "https://github.com/Little-Paw-last-dance/backend_littlepaw.git"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.7",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
   },
   "nodemonConfig": {
     "watch": [
