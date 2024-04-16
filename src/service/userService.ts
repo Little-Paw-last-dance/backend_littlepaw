@@ -29,24 +29,14 @@ export const registerUser = async (user: UserRegisterDTO) => {
           .catch(async (error) => {
             await queryRunner.rollbackTransaction();
             auth.deleteUser(userRecord.uid);
-            if (error?.original?.code !== "ER_DUP_ENTRY") {
-                console.log("Duplicate email on database");
-            }
-            console.log("Error creating user on database");
-            reject(new HttpException("Error creating user", 500));
+            reject(error);
           })
           .finally(async () => {
             await queryRunner.release();
           });
 
       })
-      .catch((error) => {
-        if (error.code === "auth/email-already-exists") {
-            console.log("Duplicate email on firebase");
-        }
-        console.log("Error creating user on firebase");
-        reject(new HttpException("Error creating user", 500));
-      });
+      .catch((error) => reject(error));
   });
 };
 

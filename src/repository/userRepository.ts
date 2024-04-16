@@ -2,8 +2,13 @@ import User from "../entity/User";
 import Role from "../entity/Roles";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { In, QueryRunner } from "typeorm";
+import HttpException from "../exception/HttpException";
 
 export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRunner): Promise<User> => {
+
+    if (userDTO.roles.includes("root")) {
+        throw new HttpException("Role root is not allowed to be assigned to users", 400);
+    }
 
     const rolesFound = await queryRunner.manager.find(Role, {
         where: {
@@ -16,7 +21,7 @@ export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRun
     });
 
     if (rolesNotfound.length > 0) {
-        throw new Error("Roles not found: " + rolesNotfound.join(", "));
+        throw new HttpException("Roles not found: " + rolesNotfound.join(", "), 400);
     }
 
     const user = new User();
