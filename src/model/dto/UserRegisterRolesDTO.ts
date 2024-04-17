@@ -1,4 +1,5 @@
-export type UserRegisterDTO = {
+export type UserRegisterRolesDTO = {
+    roles: string[],
     email: string
     password: string
     names: string

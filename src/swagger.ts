@@ -13,7 +13,7 @@ const doc = {
   produces: ["application/json"],
   components: {
     schemas: {
-      UserRegisterDTO: {
+      UserRegisterRolesDTO: {
         email: "example@email.com",
         password: "password",
         names: "John",
@@ -24,6 +24,17 @@ const doc = {
         age: 25,
         city: "La Paz",
         roles: ["user", "admin"],
+      },
+      UserRegisterDTO: {
+        email: "example@email.com",
+        password: "password",
+        names: "John",
+        paternalSurname: "Doe",
+        maternalSurname: "Smith",
+        countryCode: 591,
+        phone: "77777777",
+        age: 25,
+        city: "La Paz",
       },
       UserResponse: {
         id: 1,

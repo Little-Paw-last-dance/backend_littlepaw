@@ -1,9 +1,45 @@
 import { Request, Response } from "express";
-import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
-import { getUserInfo, registerUser } from "../service/userService";
+import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
+import { getUserInfo, registerUser, registerUserWithRoles } from "../service/userService";
 import HttpException from "../exception/HttpException";
 import { FirebaseUser } from "../model/FirebaseUser";
+import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
 
+
+export const userRegisterWithRoles = async (req: Request, res: Response) => {
+    /**
+    #swagger.requestBody = {
+        required: true,
+        type: "object",
+        schema: { $ref: "#/components/schemas/UserRegisterRolesDTO" }
+    }
+
+    #swagger.responses[200] = {
+        schema: { $ref: "#/components/schemas/UserResponse" }
+    }
+
+    #swagger.responses[400] = {
+        schema: { $ref: "#/components/schemas/HttpException" }
+    }
+
+    #swagger.tags = ['User']
+
+    #swagger.description = 'Endpoint to register a new user with roles (Requires admin role)'
+    */
+    const userRegisterRequest: UserRegisterRolesDTO = res.locals.user;
+    const roles = res.locals.roles;
+
+    registerUserWithRoles(userRegisterRequest, roles).then((user) => {
+        res.status(200).json({ user });
+    }).catch((error) => {
+        console.error(error);
+        if (error instanceof HttpException) {
+            res.status(error.statusCode).json(error);
+        } else {
+            res.status(500).json(new HttpException("Internal server error while registering user", 500));
+        }
+    });
+};
 
 export const userRegister = async (req: Request, res: Response) => {
     /**
@@ -26,9 +62,8 @@ export const userRegister = async (req: Request, res: Response) => {
     #swagger.description = 'Endpoint to register a new user'
     */
     const userRegisterRequest: UserRegisterDTO = res.locals.user;
-    const roles = res.locals.roles;
 
-    registerUser(userRegisterRequest, roles).then((user) => {
+    registerUser(userRegisterRequest).then((user) => {
         res.status(200).json({ user });
     }).catch((error) => {
         console.error(error);

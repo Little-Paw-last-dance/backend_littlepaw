@@ -1,11 +1,18 @@
 import {
+  IsArray,
   IsDefined,
   IsNumber,
+  IsString,
   Length,
 } from "class-validator";
-import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
+import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
 
-export class UserRegisterValidation implements UserRegisterDTO {
+export class UserRegisterWithRolesValidation implements UserRegisterRolesDTO {
+  @IsDefined()
+  @IsArray()
+  @IsString({ each: true })
+  roles: string[];
+
   @IsDefined()
   email: string;
 
@@ -36,7 +43,8 @@ export class UserRegisterValidation implements UserRegisterDTO {
   @IsDefined()
   city: string;
 
-  constructor(userRegister: UserRegisterDTO) {
+  constructor(userRegister: UserRegisterRolesDTO) {
+    this.roles = userRegister.roles;
     this.email = userRegister.email;
     this.password = userRegister.password;
     this.names = userRegister.names;

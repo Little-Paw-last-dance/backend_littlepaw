@@ -1,10 +1,11 @@
 import User from "../entity/User";
 import Role from "../entity/Roles";
-import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
+import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
 import { In, QueryRunner } from "typeorm";
 import HttpException from "../exception/HttpException";
+import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
 
-export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRunner, roles: Role[]): Promise<User> => {
+export const insertUserWithRoles = async (userDTO: UserRegisterRolesDTO, queryRunner: QueryRunner, roles: Role[]): Promise<User> => {
 
     if (userDTO.roles.includes("root")) {
         throw new HttpException("Role root is not allowed to be assigned to users", 400);
@@ -41,6 +42,28 @@ export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRun
     user.age = userDTO.age;
     user.city = userDTO.city;
     user.roles = rolesFound;
+
+    return await queryRunner.manager.save(User, user);
+}
+
+export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRunner): Promise<User> => {
+
+    const userRole = await queryRunner.manager.findOne(Role, { where: { roleName: "user" } });
+
+    if (!userRole) {
+        throw new HttpException("User role not found", 400);
+    }
+
+    const user = new User();
+    user.email = userDTO.email;
+    user.names = userDTO.names;
+    user.paternalSurname = userDTO.paternalSurname;
+    user.maternalSurname = userDTO.maternalSurname;
+    user.countryCode = userDTO.countryCode;
+    user.phone = userDTO.phone;
+    user.age = userDTO.age;
+    user.city = userDTO.city;
+    user.roles = [userRole];
 
     return await queryRunner.manager.save(User, user);
 }

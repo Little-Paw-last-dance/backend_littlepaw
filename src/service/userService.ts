@@ -1,14 +1,14 @@
 import { auth } from "../config/firebaseConfig";
 import typeORM from "../db/dataSource";
 import Role from "../entity/Roles";
-import User from "../entity/User";
 import HttpException from "../exception/HttpException";
-import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
+import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
+import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
 import { instanceUserResponse } from "../model/dto/userResponse";
-import { insertUser } from "../repository/userRepository";
+import { insertUser, insertUserWithRoles } from "../repository/userRepository";
 import { getUserByEmail } from "../repository/userRepository";
 
-export const registerUser = async (user: UserRegisterDTO, roles: Role[]) => {
+export const registerUserWithRoles = async (user: UserRegisterRolesDTO, roles: Role[]) => {
   return new Promise((resolve, reject) => {
     auth
       .createUser({
@@ -24,7 +24,42 @@ export const registerUser = async (user: UserRegisterDTO, roles: Role[]) => {
         const queryRunner = typeORM.createQueryRunner();
         await queryRunner.startTransaction();
 
-        return insertUser(user, queryRunner, roles)
+        return insertUserWithRoles(user, queryRunner, roles)
+          .then(async (userDB) => {
+            await queryRunner.commitTransaction();
+            resolve(instanceUserResponse(userDB));
+          })
+          .catch(async (error) => {
+            await queryRunner.rollbackTransaction();
+            auth.deleteUser(userRecord.uid);
+            reject(error);
+          })
+          .finally(async () => {
+            await queryRunner.release();
+          });
+
+      })
+      .catch((error) => reject(error));
+  });
+};
+
+export const registerUser = async (user: UserRegisterDTO) => {
+  return new Promise((resolve, reject) => {
+    auth
+      .createUser({
+        email: user.email,
+        emailVerified: false,
+        phoneNumber: "+" + user.countryCode + user.phone,
+        displayName: user.names + " " + user.paternalSurname,
+        disabled: false,
+        password: user.password,
+      })
+      .then(async (userRecord) => {
+
+        const queryRunner = typeORM.createQueryRunner();
+        await queryRunner.startTransaction();
+
+        return insertUser(user, queryRunner)
           .then(async (userDB) => {
             await queryRunner.commitTransaction();
             resolve(instanceUserResponse(userDB));
