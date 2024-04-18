@@ -4,6 +4,7 @@ import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
 import { In, QueryRunner } from "typeorm";
 import HttpException from "../exception/HttpException";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
+import { UserUpdateDTO } from "../model/dto/userUpdateDTO";
 
 export const insertUserWithRoles = async (userDTO: UserRegisterRolesDTO, queryRunner: QueryRunner, roles: Role[]): Promise<User> => {
 
@@ -71,4 +72,34 @@ export const insertUser = async (userDTO: UserRegisterDTO, queryRunner: QueryRun
 
 export const getUserByEmail = async (email: string, queryRunner: QueryRunner): Promise<User | null> => {
     return await queryRunner.manager.findOne<User>(User, { where: { email }, relations: ["roles"] });
+}
+
+export const updateUserInfoByEmail = async (email: string, userDTO: UserUpdateDTO, queryRunner: QueryRunner): Promise<User | null> => {
+    const user = await queryRunner.manager.findOne(User, { where: { email } });
+
+    if (!user) {
+        throw new HttpException("User not found", 404);
+    }
+
+    user.names = userDTO.names || user.names;
+    user.paternalSurname = userDTO.paternalSurname || user.paternalSurname;
+    user.maternalSurname = userDTO.maternalSurname || user.maternalSurname;
+    user.countryCode = userDTO.countryCode || user.countryCode;
+    user.phone = userDTO.phone || user.phone;
+    user.age = userDTO.age || user.age;
+    user.city = userDTO.city || user.city;
+
+    await queryRunner.manager.createQueryBuilder().update(User).set(user).where("email = :email", { email }).execute().then(() => user);
+
+    return await getUserByEmail(email, queryRunner);
+}
+
+export const deleteUserInfoByEmail = async (email: string, queryRunner: QueryRunner): Promise<User> => {
+    const user = await getUserByEmail(email, queryRunner);
+
+    if (!user) {
+        throw new HttpException("User not found", 404);
+    }
+
+    return await queryRunner.manager.remove<User>(User, user);
 }

@@ -36,6 +36,15 @@ const doc = {
         age: 25,
         city: "La Paz",
       },
+      UserUpdateDTO: {
+        names: "John",
+        paternalSurname: "Doe",
+        maternalSurname: "Smith",
+        countryCode: 591,
+        phone: "77777777",
+        age: 25,
+        city: "La Paz",
+      },
       UserResponse: {
         id: 1,
         email: "example@email.com",

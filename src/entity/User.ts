@@ -31,7 +31,7 @@ class User {
     @Column({ name: "city" })
     city: string
 
-    @ManyToMany(() => Role)
+    @ManyToMany(() => Role, (role) => role.users, { cascade: true })
     @JoinTable({ name: "user_role", joinColumn: { name: "user_id" }, inverseJoinColumn: { name: "role_id" } })
     roles: Role[]
 
