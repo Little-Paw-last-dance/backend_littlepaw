@@ -93,3 +93,13 @@ export const updateUserInfoByEmail = async (email: string, userDTO: UserUpdateDT
 
     return await getUserByEmail(email, queryRunner);
 }
+
+export const deleteUserInfoByEmail = async (email: string, queryRunner: QueryRunner): Promise<User> => {
+    const user = await getUserByEmail(email, queryRunner);
+
+    if (!user) {
+        throw new HttpException("User not found", 404);
+    }
+
+    return await queryRunner.manager.remove<User>(User, user);
+}

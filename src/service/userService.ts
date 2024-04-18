@@ -6,7 +6,8 @@ import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
 import { instanceUserResponse } from "../model/dto/userResponse";
 import { UserUpdateDTO } from "../model/dto/userUpdateDTO";
-import { insertUser, insertUserWithRoles, updateUserInfoByEmail } from "../repository/userRepository";
+import { FirebaseUser } from "../model/firebaseUser";
+import { deleteUserInfoByEmail, insertUser, insertUserWithRoles, updateUserInfoByEmail } from "../repository/userRepository";
 import { getUserByEmail } from "../repository/userRepository";
 
 export const registerUserWithRoles = async (user: UserRegisterRolesDTO, roles: Role[]) => {
@@ -106,4 +107,22 @@ export const updateUserInfo = async (email: string, user: UserUpdateDTO) => {
       })
       .catch((error) => reject(error));
   });
+};
+
+export const deleteUserInfo = async (firebaseUser: FirebaseUser) => {
+  try {
+    const queryRunner = typeORM.createQueryRunner();
+    await queryRunner.startTransaction();
+    const user = await deleteUserInfoByEmail(firebaseUser.email, queryRunner);
+    if (user) {
+      await auth.deleteUser(firebaseUser.uid);
+      await queryRunner.commitTransaction();
+      return instanceUserResponse(user);
+    } else {
+      await queryRunner.rollbackTransaction();
+      throw new HttpException("User not found", 404);
+    }
+  } catch (error) {
+    throw error;
+  }
 };
