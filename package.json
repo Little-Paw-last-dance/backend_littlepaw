@@ -1,35 +1,51 @@
 {
-  "name": "backend_littlepaw",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon"
-  },
-  "author": "Dylan Chambi",
-  "license": "AGPL-3.0-only",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Little-Paw-last-dance/backend_littlepaw.git"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.12.7",
-    "nodemon": "^3.1.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
-  },
-  "dependencies": {
-    "express": "^4.19.2"
-  },
-  "nodemonConfig": {
-    "watch": [
-      "src"
-    ],
-    "ext": "ts",
-    "exec": "ts-node src/index.ts"
-  }
+   "name": "backend_littlepaw",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "build": "tsc",
+      "start": "ts-node src/index.ts",
+      "dev": "nodemon --exec \"npm run swagger && npm run start\"",
+      "typeorm": "typeorm-ts-node-commonjs",
+      "swagger": "ts-node src/swagger.ts"
+   },
+   "author": "Dylan Chambi",
+   "license": "AGPL-3.0-only",
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/Little-Paw-last-dance/backend_littlepaw.git"
+   },
+   "devDependencies": {
+      "@types/cors": "^2.8.17",
+      "@types/express": "^4.17.21",
+      "@types/morgan": "^1.9.9",
+      "@types/node": "^16.18.96",
+      "@types/swagger-ui-express": "^4.1.6",
+      "concurrently": "^8.2.2",
+      "nodemon": "^3.1.0",
+      "ts-node": "10.9.2",
+      "typescript": "5.4.5"
+   },
+   "dependencies": {
+      "class-validator": "^0.14.1",
+      "cors": "^2.8.5",
+      "dotenv": "^16.4.5",
+      "express": "^4.19.2",
+      "firebase-admin": "^12.0.0",
+      "morgan": "^1.10.0",
+      "mysql2": "^3.9.4",
+      "reflect-metadata": "^0.2.2",
+      "swagger-autogen": "^2.23.7",
+      "swagger-ui-express": "^5.0.0",
+      "typeorm": "0.3.20"
+   },
+   "nodemonConfig": {
+      "watch": [
+         "src"
+      ],
+      "ext": "ts",
+      "exec": "ts-node src/index.ts"
+   }
 }
