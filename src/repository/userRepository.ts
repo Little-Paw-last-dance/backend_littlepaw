@@ -1,9 +1,9 @@
 import User from "../entity/User";
 import Role from "../entity/Roles";
-import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
+import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
 import { In, QueryRunner } from "typeorm";
 import HttpException from "../exception/HttpException";
-import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
+import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 
 export const insertUserWithRoles = async (userDTO: UserRegisterRolesDTO, queryRunner: QueryRunner, roles: Role[]): Promise<User> => {
 

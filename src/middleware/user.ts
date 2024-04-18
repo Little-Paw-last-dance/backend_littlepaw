@@ -1,8 +1,8 @@
 import {validate} from "class-validator"
 import {Request, Response, NextFunction} from "express"
 import { UserRegisterValidation } from "../validation/userRegisterValidation";
-import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
-import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
+import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
+import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { UserRegisterWithRolesValidation } from "../validation/userRegisterWithRolesValidation";
 
 export const userRegisterWithRolesValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {

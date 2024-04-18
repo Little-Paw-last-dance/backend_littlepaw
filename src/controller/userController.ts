@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
+import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
 import { getUserInfo, registerUser, registerUserWithRoles } from "../service/userService";
 import HttpException from "../exception/HttpException";
-import { FirebaseUser } from "../model/FirebaseUser";
-import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
+import { FirebaseUser } from "../model/firebaseUser";
+import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 
 
 export const userRegisterWithRoles = async (req: Request, res: Response) => {

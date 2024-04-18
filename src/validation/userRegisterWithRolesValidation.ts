@@ -5,7 +5,7 @@ import {
   IsString,
   Length,
 } from "class-validator";
-import { UserRegisterRolesDTO } from "../model/dto/UserRegisterRolesDTO";
+import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
 
 export class UserRegisterWithRolesValidation implements UserRegisterRolesDTO {
   @IsDefined()

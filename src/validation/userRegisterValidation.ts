@@ -3,7 +3,7 @@ import {
   IsNumber,
   Length,
 } from "class-validator";
-import { UserRegisterDTO } from "../model/dto/UserRegisterDTO";
+import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 
 export class UserRegisterValidation implements UserRegisterDTO {
   @IsDefined()

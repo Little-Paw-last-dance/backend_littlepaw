@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
 import {auth} from '../config/firebaseConfig';
-import { FirebaseUser } from '../model/FirebaseUser';
+import { FirebaseUser } from '../model/firebaseUser';
 import HttpException from '../exception/HttpException';
 import typeORM from '../db/dataSource';
 import User from '../entity/User';
