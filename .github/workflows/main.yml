@@ -12,7 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install dependencies
-        run: npm install  
+        run: npm install
+      - name: Create swagger
+        run: npm run swagger
       - name: Build
         run: npm run build
       - name: Generate deployment zip
