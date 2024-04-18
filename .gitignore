@@ -151,3 +151,6 @@ dist
 # Extras
 extras/*
 swagger_output.json
+
+# tree.txt
+tree.txt
