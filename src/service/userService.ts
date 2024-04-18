@@ -5,7 +5,8 @@ import HttpException from "../exception/HttpException";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
 import { instanceUserResponse } from "../model/dto/userResponse";
-import { insertUser, insertUserWithRoles } from "../repository/userRepository";
+import { UserUpdateDTO } from "../model/dto/userUpdateDTO";
+import { insertUser, insertUserWithRoles, updateUserInfoByEmail } from "../repository/userRepository";
 import { getUserByEmail } from "../repository/userRepository";
 
 export const registerUserWithRoles = async (user: UserRegisterRolesDTO, roles: Role[]) => {
@@ -82,6 +83,20 @@ export const registerUser = async (user: UserRegisterDTO) => {
 export const getUserInfo = async (email: string) => {
   return new Promise((resolve, reject) => {
     getUserByEmail(email, typeORM.createQueryRunner())
+      .then((user) => {
+        if (user) {
+          resolve(instanceUserResponse(user));
+        } else {
+          reject(new HttpException("User not found", 404));
+        }
+      })
+      .catch((error) => reject(error));
+  });
+};
+
+export const updateUserInfo = async (email: string, user: UserUpdateDTO) => {
+  return new Promise((resolve, reject) => {
+    updateUserInfoByEmail(email, user, typeORM.createQueryRunner())
       .then((user) => {
         if (user) {
           resolve(instanceUserResponse(user));
