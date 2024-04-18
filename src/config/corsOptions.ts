@@ -2,9 +2,10 @@ import cors from 'cors'
 
 export const corsOptions: cors.CorsOptions = {
     origin: [
-        'localhost',
+        'http://localhost:3000',
+        'http://localhost:8000',
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
     optionsSuccessStatus: 200
 }
