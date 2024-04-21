@@ -6,7 +6,7 @@ export const corsOptions: cors.CorsOptions = {
         'http://localhost:3001',
         'http://localhost:8000',
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
     optionsSuccessStatus: 200
 }
