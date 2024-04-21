@@ -1,0 +1,1 @@
+sudo certbot -n -d YOURDOMAINHERE --nginx --agree-tos --email YOUREMAILHERE
