@@ -17,6 +17,17 @@ jobs:
         run: npm run swagger
       - name: Build
         run: npm run build
+      - name: Create certificate creation command
+        env: 
+          EMAIL: ${{ secrets.EMAIL }}
+          DOMAIN: ${{ secrets.DOMAIN }}
+        run: |
+          cd .platform/hooks/postdeploy
+          rm 00_get_certificate.sh
+          touch 00_get_certificate.sh
+          echo "#!/usr/bin/env bash" >> 00_get_certificate.sh
+          echo "sudo certbot -n -d $DOMAIN --nginx --agree-tos --email $EMAIL" >> 00_get_certificate.sh
+          cd ..    
       - name: Generate deployment zip
         run: zip -r deploy.zip * .[^.]* -x "**node_modules**" -x "**src**"
       - name: Get timestamp
