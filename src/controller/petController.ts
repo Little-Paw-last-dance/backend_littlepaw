@@ -6,6 +6,25 @@ import { postAPet } from "../service/petService";
 
 
 export const postPet = async (req: Request, res: Response) => {
+    /**
+    #swagger.requestBody = {
+        required: true,
+        type: "object",
+        schema: { $ref: "#/components/schemas/PetPostRequestDTO" }
+    }
+
+    #swagger.responses[200] = {
+        schema: { $ref: "#/components/schemas/PetPostResponseDTO" }
+    }
+
+    #swagger.responses[400] = {
+        schema: { $ref: "#/components/schemas/HttpException" }
+    }
+
+    #swagger.tags = ['Pet']
+
+    #swagger.description = 'Endpoint to post a pet'
+    */
     const userEmail: string = res.locals.firebaseUser.email;
     const petPost: PetPostRequestDTO = res.locals.petPost;
 
