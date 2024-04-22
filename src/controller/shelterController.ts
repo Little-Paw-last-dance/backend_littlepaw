@@ -3,6 +3,25 @@ import {Request, Response} from "express";
 import { registerAShelter } from "../service/shelterService";
 import HttpException from "../exception/HttpException";
 export const registerShelter = async (req: Request, res: Response) => {
+    /**
+    #swagger.requestBody = {
+        required: true,
+        type: "object",
+        schema: { $ref: "#/components/schemas/ShelterRegisterDTO" }
+    }
+
+    #swagger.responses[200] = {
+        schema: { $ref: "#/components/schemas/ShelterResponse" }
+    }
+
+    #swagger.responses[400] = {
+        schema: { $ref: "#/components/schemas/HttpException" }
+    }
+
+    #swagger.tags = ['Shelter']
+
+    #swagger.description = 'Endpoint to register a new shelter (Requires admin role)'
+    */
     const shelterRegisterDTO: ShelterRegisterDTO = res.locals.shelterRegister;
     const userEmail: string = res.locals.firebaseUser.email;
     registerAShelter(shelterRegisterDTO, userEmail).then((shelter) => {

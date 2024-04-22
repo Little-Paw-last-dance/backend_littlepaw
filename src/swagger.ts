@@ -111,6 +111,23 @@ const doc = {
           password: "Password is required",
         },
       },
+      ShelterRegisterDTO: {
+        name: "Liberty Shelter",
+        location: "La Paz",
+        urlPage: "https://shelterliberty.com",
+        countryCode: 591,
+        phone: "75845845",
+        photo: "base64 image",
+      },
+      ShelterResponse: {
+        id : 1,
+        name: "Liberty Shelter",
+        location: "La Paz",
+        urlPage: "https://shelterliberty.com",
+        countryCode: 591,
+        phone: "75845845",
+        photo: "link image",
+      }
     },
   },
 };
