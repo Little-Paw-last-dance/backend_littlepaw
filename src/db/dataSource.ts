@@ -1,8 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import User from "../entity/User"
 import mysqlConfig from '../config/mysqlConfig';
-import Role from "../entity/Roles";
 
 const typeORM = new DataSource({
     type: "mysql",
@@ -14,8 +12,8 @@ const typeORM = new DataSource({
     synchronize: false,
     logging: false,
     entities: [
-        User,
-        Role
+        __dirname + "/../entity/*.ts",
+        __dirname + "/../entity/*.js"
     ],
     migrations: [],
     subscribers: [],
