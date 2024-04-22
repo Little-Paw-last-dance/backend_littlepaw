@@ -16,7 +16,7 @@ class Shelters {
     urlPage: string;
 
     @Column({name:"country_code"})
-    countryCode: string;
+    countryCode: number;
 
     @Column({name:"phone"})
     phone: string;
@@ -24,3 +24,5 @@ class Shelters {
     @Column({name:"Photo"})
     photo: string;
 }
+
+export default Shelters
