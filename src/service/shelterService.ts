@@ -6,13 +6,13 @@ import { insertShelter } from "../repository/shelterRepository";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceShelterResponse } from "../model/dto/shelterResponse";
 
-export const registerAShelter = async(shelterRegister:ShelterRegisterDTO) => {
+export const registerAShelter = async(shelterRegister:ShelterRegisterDTO, userEmail:string) => {
     const queryRunner = typeORM.createQueryRunner();
     await queryRunner.startTransaction();
 
     try {
         const photoPath = await uploadFilesB64AndReturnPaths([shelterRegister.photo], () => `shelters/${shelterRegister.name + "_" + uuidv4()}`);
-        const shelterRegisterEntity = await insertShelter(shelterRegister, queryRunner, photoPath[0]);
+        const shelterRegisterEntity = await insertShelter(shelterRegister, queryRunner, photoPath[0], userEmail);
 
         if(!shelterRegisterEntity) {
             throw new Error("Error inserting shelter");

@@ -4,7 +4,8 @@ import { registerAShelter } from "../service/shelterService";
 import HttpException from "../exception/HttpException";
 export const registerShelter = async (req: Request, res: Response) => {
     const shelterRegisterDTO: ShelterRegisterDTO = res.locals.shelterRegister;
-    registerAShelter(shelterRegisterDTO).then((shelter) => {
+    const userEmail: string = res.locals.firebaseUser.email;
+    registerAShelter(shelterRegisterDTO, userEmail).then((shelter) => {
         res.status(200).json(shelter);
     }).catch((error) => {
         console.error(error);
