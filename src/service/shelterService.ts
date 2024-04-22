@@ -6,7 +6,7 @@ import { insertShelter } from "../repository/shelterRepository";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceShelterResponse } from "../model/dto/shelterResponse";
 
-export const registerShelter = async(shelterRegister:ShelterRegisterDTO) => {
+export const registerAShelter = async(shelterRegister:ShelterRegisterDTO) => {
     const queryRunner = typeORM.createQueryRunner();
     await queryRunner.startTransaction();
 
