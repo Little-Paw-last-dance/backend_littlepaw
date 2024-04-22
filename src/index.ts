@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 8000;
 const app: Application = express();
 
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(morgan("combined"));
 
 app.use("/api", [apiRouter]);
