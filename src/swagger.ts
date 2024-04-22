@@ -3,39 +3,6 @@ import Sex from "./model/sex";
 import PetType from "./model/petType";
 import PetStatus from "./model/petStatus";
 
-
-// type User = {
-//   email: string
-//   names: string
-//   paternalSurname: string
-//   maternalSurname: string
-//   countryCode: number
-//   phone: string
-//   age: number
-//   city: string
-// }
-
-// type Pet = {
-//   id: number
-//   name: string
-//   age: number
-//   sex: Sex
-//   breed: string
-//   description: string
-//   type: PetType
-//   photos: string[]
-// }
-
-
-
-// export type PetPostResponseDTO = {
-//   id: number
-//   pet: Pet
-//   user: User
-//   contact: string
-//   status: PetStatus
-// }
-
 const doc = {
   info: {
     version: "v1.0.0",
