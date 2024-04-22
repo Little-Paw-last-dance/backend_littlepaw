@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, JoinColumn } from "typeorm"
 import Role from "./Roles"
+import PetPosts from "./PetPosts"
 
 @Entity("users")
 class User {
@@ -35,6 +36,8 @@ class User {
     @JoinTable({ name: "user_role", joinColumn: { name: "user_id" }, inverseJoinColumn: { name: "role_id" } })
     roles: Role[]
 
+    @OneToMany(() => PetPosts, (post) => post.user)
+    posts: PetPosts[]
 }
 
 export default User
