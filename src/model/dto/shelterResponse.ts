@@ -10,7 +10,7 @@ export type ShelterResponse = {
     photo: string;
 }
 
-export const instanceShelterResponse = (shelter: Shelters): ShelterResponse => {
+export const instanceShelterResponse = (shelter: Shelters, photoPath:string): ShelterResponse => {
     return {
         id: shelter.id,
         name: shelter.name,
@@ -18,6 +18,6 @@ export const instanceShelterResponse = (shelter: Shelters): ShelterResponse => {
         urlPage: shelter.urlPage,
         countryCode: shelter.countryCode,
         phone: shelter.phone,
-        photo: shelter.photo
+        photo: photoPath
     }
 }
