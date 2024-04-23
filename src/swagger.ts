@@ -119,6 +119,14 @@ const doc = {
         phone: "75845845",
         photo: "base64 image",
       },
+      ShelterUpdateDTO: {
+        name: "Hope Shelter",
+        location: "El Alto",
+        urlPage: "https://shelterhope.com",
+        countryCode: 591,
+        phone: "75845845",
+        photo: "base64 image",
+      },
       ShelterResponse: {
         id : 1,
         name: "Liberty Shelter",

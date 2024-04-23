@@ -83,7 +83,24 @@ export const getAllShelters = async (queryRunner: QueryRunner): Promise<Shelters
     return await queryRunner.manager.find(Shelters);
 }
 
-export const deleteShelter = async (id: number, queryRunner: QueryRunner): Promise<Shelters | null> => {
+export const deleteShelter = async (id: number, queryRunner: QueryRunner, userEmail:string): Promise<Shelters | null> => {
+    const user = await queryRunner.manager.findOne<User>(User, { where: { email:userEmail }, relations: ["roles"] });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    if(!user.roles) {
+        throw new HttpException("User has no roles", 400);
+    }
+
+    const hasAdminRole = user.roles.some((role) => role.roleName === "admin");
+    const isRoot = user.roles.some((role) => role.roleName === "root");
+
+    if (!hasAdminRole && !isRoot) {
+        throw new HttpException("Only users with admin or root role can create users", 400);
+    }
+
     const shelter = await queryRunner.manager.findOne(Shelters, { where: { id } });
     if(!shelter) {
         throw new HttpException("Shelter not found", 404);

@@ -9,6 +9,6 @@ shelterRouter.post("/", [shelterRegisterValidationMiddleware, authenticationVali
 shelterRouter.patch("/:id", [shelterUpdateValidationMiddleware, authenticationValidation], updateShelter);
 shelterRouter.get("/:id", getShelter);
 shelterRouter.get("/", getAllShelters);
-shelterRouter.delete("/:id", deleteShelter);
+shelterRouter.delete("/:id", authenticationValidation,deleteShelter);
 
 export default shelterRouter;

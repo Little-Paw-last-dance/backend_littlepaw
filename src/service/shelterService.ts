@@ -120,14 +120,15 @@ export const getAllTheShelters = async() => {
     })
 }
 
-export const deleteAShelter = async(id:number) => {
+export const deleteAShelter = async(id:number, userEmail:string) => {
     const queryRunner = typeORM.createQueryRunner();
     await queryRunner.startTransaction();
     return new Promise((resolve, reject) => {
-        deleteShelter(id, queryRunner)
+        deleteShelter(id, queryRunner, userEmail)
         .then(async (shelter) => {
             if(shelter) {
                 await deleteFiles([shelter.photo]);
+                await queryRunner.commitTransaction();
                 resolve(instanceShelterResponse(shelter, shelter.photo));
             } else {
                 reject(new HttpException("Shelter not found", 404));

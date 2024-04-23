@@ -146,7 +146,8 @@ export const deleteShelter = async (req: Request, res: Response) => {
     #swagger.description = 'Endpoint to delete a shelter by id'
     */
     const id: number = parseInt(req.params.id);
-    deleteAShelter(id).then((shelter) => {
+    const userEmail: string = res.locals.firebaseUser.email;
+    deleteAShelter(id, userEmail).then((shelter) => {
         res.status(200).json(shelter);
     }).catch((error) => {
         console.error(error);
