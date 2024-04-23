@@ -38,3 +38,7 @@ export const insertShelter = async (shelterDTO: ShelterRegisterDTO, queryRunner:
 export const getShelterById = async (id: number, queryRunner: QueryRunner): Promise<Shelters | null> => {
     return await queryRunner.manager.findOne(Shelters, { where: { id } });
 }
+
+export const getAllShelters = async (queryRunner: QueryRunner): Promise<Shelters[]> => {
+    return await queryRunner.manager.find(Shelters);
+}

@@ -2,7 +2,7 @@ import typeORM from "../db/dataSource";
 import { ShelterRegisterDTO } from "../model/dto/shelterRegisterDTO";
 import { uploadFilesB64AndReturnPaths } from "../util/util";
 import {v4 as uuidv4} from 'uuid';
-import { insertShelter, getShelterById } from "../repository/shelterRepository";
+import { insertShelter, getShelterById, getAllShelters } from "../repository/shelterRepository";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceShelterResponse } from "../model/dto/shelterResponse";
 import HttpException from "../exception/HttpException";
@@ -55,4 +55,27 @@ export const getAShelterById = async(id:number) => {
     })
     
     
+}
+
+export const getAllTheShelters = async() => {
+    const queryRunner = typeORM.createQueryRunner();
+    await queryRunner.startTransaction();
+    return new Promise((resolve, reject) => {
+        getAllShelters(queryRunner)
+        .then(async (shelters) => {
+            const sheltersResponse = await Promise.all(shelters.map(async (shelter) => {
+                const photoURL = await getSignedUrlByPath(shelter.photo);
+                return instanceShelterResponse(shelter, photoURL);
+            }));
+            await queryRunner.commitTransaction();
+            resolve(sheltersResponse);
+        })
+        .catch(async (error) => {
+            await queryRunner.rollbackTransaction();
+            reject(error);
+        })
+        .finally(async () => {
+            await queryRunner.release();
+        });
+    })
 }
