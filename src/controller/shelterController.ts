@@ -68,7 +68,7 @@ export const getShelter = async (req: Request, res: Response) => {
 export const getAllShelters = async (req: Request, res: Response) => {
     /**
     #swagger.responses[200] = {
-        schema: { $ref: "#/components/schemas/ShelterResponse" }
+        schema: { $ref: "#/components/schemas/SheltersResponse" }
     }
 
     #swagger.responses[400] = {

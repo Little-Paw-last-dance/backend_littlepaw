@@ -127,7 +127,28 @@ const doc = {
         countryCode: 591,
         phone: "75845845",
         photo: "link image",
-      }
+      },
+      
+      SheltersResponse: [
+        {
+          id : 1,
+          name: "Liberty Shelter",
+          location: "La Paz",
+          urlPage: "https://shelterliberty.com",
+          countryCode: 591,
+          phone: "75845845",
+          photo: "link image",
+        },
+        {
+          id : 2,
+          name: "Hope Shelter",
+          location: "El Alto",
+          urlPage: "https://shelterhope.com",
+          countryCode: 591,
+          phone: "75845845",
+          photo: "link image",
+        },
+      ],
     },
   },
 };
