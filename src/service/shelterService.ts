@@ -1,8 +1,8 @@
 import typeORM from "../db/dataSource";
 import { ShelterRegisterDTO } from "../model/dto/shelterRegisterDTO";
-import { uploadFilesB64AndReturnPaths } from "../util/util";
+import { uploadFilesB64AndReturnPaths, deleteFiles } from "../util/util";
 import {v4 as uuidv4} from 'uuid';
-import { insertShelter, getShelterById, getAllShelters } from "../repository/shelterRepository";
+import { insertShelter, getShelterById, getAllShelters, deleteShelter } from "../repository/shelterRepository";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceShelterResponse } from "../model/dto/shelterResponse";
 import HttpException from "../exception/HttpException";
@@ -69,6 +69,29 @@ export const getAllTheShelters = async() => {
             }));
             await queryRunner.commitTransaction();
             resolve(sheltersResponse);
+        })
+        .catch(async (error) => {
+            await queryRunner.rollbackTransaction();
+            reject(error);
+        })
+        .finally(async () => {
+            await queryRunner.release();
+        });
+    })
+}
+
+export const deleteAShelter = async(id:number) => {
+    const queryRunner = typeORM.createQueryRunner();
+    await queryRunner.startTransaction();
+    return new Promise((resolve, reject) => {
+        deleteShelter(id, queryRunner)
+        .then(async (shelter) => {
+            if(shelter) {
+                await deleteFiles([shelter.photo]);
+                resolve(instanceShelterResponse(shelter, shelter.photo));
+            } else {
+                reject(new HttpException("Shelter not found", 404));
+            }
         })
         .catch(async (error) => {
             await queryRunner.rollbackTransaction();

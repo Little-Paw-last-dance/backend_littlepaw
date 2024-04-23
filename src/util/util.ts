@@ -1,5 +1,5 @@
 import { PetPostRequestDTO } from "../model/dto/petPostRequestDTO";
-import { uploadFile } from "../repository/s3Repository";
+import { uploadFile, deleteFile } from "../repository/s3Repository";
 
 
 export const  extractDataFromURI = (uri: string): { base64String: string, mimeType: string } | null => {
@@ -22,4 +22,12 @@ export const uploadFilesB64AndReturnPaths = async (filesB64: string[], getPathFu
     });
 
     return await Promise.all(promises);
+}
+
+export const deleteFiles = async (paths: string[]): Promise<void> => {
+    const promises = paths.map(async (path) => {
+        return await deleteFile(path);
+    });
+
+    await Promise.all(promises);
 }

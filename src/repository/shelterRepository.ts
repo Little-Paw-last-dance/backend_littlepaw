@@ -42,3 +42,11 @@ export const getShelterById = async (id: number, queryRunner: QueryRunner): Prom
 export const getAllShelters = async (queryRunner: QueryRunner): Promise<Shelters[]> => {
     return await queryRunner.manager.find(Shelters);
 }
+
+export const deleteShelter = async (id: number, queryRunner: QueryRunner): Promise<Shelters | null> => {
+    const shelter = await queryRunner.manager.findOne(Shelters, { where: { id } });
+    if(!shelter) {
+        throw new HttpException("Shelter not found", 404);
+    }
+    return await queryRunner.manager.remove(shelter);
+}
