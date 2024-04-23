@@ -2,10 +2,11 @@ import typeORM from "../db/dataSource";
 import { ShelterRegisterDTO } from "../model/dto/shelterRegisterDTO";
 import { uploadFilesB64AndReturnPaths, deleteFiles } from "../util/util";
 import {v4 as uuidv4} from 'uuid';
-import { insertShelter, getShelterById, getAllShelters, deleteShelter } from "../repository/shelterRepository";
+import { insertShelter, getShelterById, getAllShelters, deleteShelter, updateShelter } from "../repository/shelterRepository";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceShelterResponse } from "../model/dto/shelterResponse";
 import HttpException from "../exception/HttpException";
+import { ShelterUpdateDTO } from "../model/dto/shelterUpdateDTO";
 
 export const registerAShelter = async(shelterRegister:ShelterRegisterDTO, userEmail:string) => {
     const queryRunner = typeORM.createQueryRunner();
@@ -29,6 +30,45 @@ export const registerAShelter = async(shelterRegister:ShelterRegisterDTO, userEm
     } finally {
         await queryRunner.release();
     }
+}
+
+export const updateAShelter = async(id:number, shelterUpdate:ShelterUpdateDTO, userEmail:string) => {
+    const queryRunner = typeORM.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    try {
+        if(shelterUpdate.photo) {
+
+            const photoPath = await uploadFilesB64AndReturnPaths([shelterUpdate.photo], () => `shelters/${shelterUpdate.name + "_" + uuidv4()}`);
+            const shelterUpdateEntity = await updateShelter(id, shelterUpdate, queryRunner, userEmail, photoPath[0]);
+
+            if(!shelterUpdateEntity) {
+                throw new Error("Error updating shelter");
+            }
+
+            const photoURL = await Promise.all(photoPath.map(async (path) => await getSignedUrlByPath(path)));
+            const response = instanceShelterResponse(shelterUpdateEntity, photoURL[0]);
+            await queryRunner.commitTransaction();
+            return response;
+        } else {
+            const shelterUpdateEntity = await updateShelter(id, shelterUpdate, queryRunner, userEmail);
+
+            if(!shelterUpdateEntity) {
+                throw new Error("Error updating shelter");
+            }
+
+            const photoURL = await getSignedUrlByPath(shelterUpdateEntity.photo);
+            const response = instanceShelterResponse(shelterUpdateEntity, photoURL);
+            await queryRunner.commitTransaction();
+            return response;
+        }
+    } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+    } finally {
+        await queryRunner.release();
+    }
+
 }
 
 export const getAShelterById = async(id:number) => {
