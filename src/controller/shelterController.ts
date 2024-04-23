@@ -1,6 +1,6 @@
 import { ShelterRegisterDTO } from "../model/dto/shelterRegisterDTO";
 import {Request, Response} from "express";
-import { registerAShelter, getAShelterById, getAllTheShelters } from "../service/shelterService";
+import { registerAShelter, getAShelterById, getAllTheShelters, deleteAShelter } from "../service/shelterService";
 import HttpException from "../exception/HttpException";
 export const registerShelter = async (req: Request, res: Response) => {
     /**
@@ -65,6 +65,7 @@ export const getShelter = async (req: Request, res: Response) => {
     
 }
 
+
 export const getAllShelters = async (req: Request, res: Response) => {
     /**
     #swagger.responses[200] = {
@@ -90,5 +91,33 @@ export const getAllShelters = async (req: Request, res: Response) => {
             res.status(500).json(new HttpException("Internal Server Error while getting shelters", 500))
         } 
     })
+    
+}
+
+export const deleteShelter = async (req: Request, res: Response) => {
+    /**
+    #swagger.responses[200] = {
+        schema: { $ref: "#/components/schemas/ShelterResponse" }
+    }
+
+    #swagger.responses[400] = {
+        schema: { $ref: "#/components/schemas/HttpException" }
+    }
+
+    #swagger.tags = ['Shelter']
+
+    #swagger.description = 'Endpoint to delete a shelter by id'
+    */
+    const id: number = parseInt(req.params.id);
+    deleteAShelter(id).then((shelter) => {
+        res.status(200).json(shelter);
+    }).catch((error) => {
+        console.error(error);
+        if(error instanceof HttpException) {
+            res.status(error.statusCode).json(error);
+        } else {
+            res.status(500).json(new HttpException("Internal Server Error while deleting shelter", 500))
+        } 
+    });
     
 }
