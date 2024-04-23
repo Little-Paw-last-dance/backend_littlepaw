@@ -60,15 +60,16 @@ export const updateShelter = async (id: number, shelterUpdateDTO: ShelterUpdateD
     if(!shelter) {
         throw new HttpException("Shelter not found", 404);
     }
+    if(photoPath) {
+        await deleteFiles([shelter.photo]);
+    }
     shelter.name = shelterUpdateDTO.name || shelter.name;
     shelter.location = shelterUpdateDTO.location || shelter.location;
     shelter.urlPage = shelterUpdateDTO.urlPage || shelter.urlPage;
     shelter.countryCode = shelterUpdateDTO.countryCode || shelter.countryCode;
     shelter.phone = shelterUpdateDTO.phone || shelter.phone;
     shelter.photo = photoPath || shelter.photo;
-    if(photoPath) {
-        await deleteFiles([shelter.photo]);
-    }
+    
     await queryRunner.manager.createQueryBuilder().update(Shelters).set(shelter).where("id = :id", { id }).execute().then(() => shelter);
     return await getShelterById(id, queryRunner);
 }
