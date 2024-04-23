@@ -5,6 +5,7 @@ import {v4 as uuidv4} from 'uuid';
 import { insertShelter, getShelterById } from "../repository/shelterRepository";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceShelterResponse } from "../model/dto/shelterResponse";
+import HttpException from "../exception/HttpException";
 
 export const registerAShelter = async(shelterRegister:ShelterRegisterDTO, userEmail:string) => {
     const queryRunner = typeORM.createQueryRunner();
@@ -41,7 +42,7 @@ export const getAShelterById = async(id:number) => {
                 await queryRunner.commitTransaction();
                 resolve(instanceShelterResponse(shelter, photoURL));
               } else {
-                reject(new Error("Shelter not found"));
+                reject(new HttpException("Shelter not found", 404));
               }
          })
          .catch(async (error) => {

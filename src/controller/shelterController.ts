@@ -1,6 +1,6 @@
 import { ShelterRegisterDTO } from "../model/dto/shelterRegisterDTO";
 import {Request, Response} from "express";
-import { registerAShelter } from "../service/shelterService";
+import { registerAShelter, getAShelterById } from "../service/shelterService";
 import HttpException from "../exception/HttpException";
 export const registerShelter = async (req: Request, res: Response) => {
     /**
@@ -36,3 +36,31 @@ export const registerShelter = async (req: Request, res: Response) => {
     });
     
 };
+
+export const getShelter = async (req: Request, res: Response) => {
+    /**
+    #swagger.responses[200] = {
+        schema: { $ref: "#/components/schemas/ShelterResponse" }
+    }
+
+    #swagger.responses[400] = {
+        schema: { $ref: "#/components/schemas/HttpException" }
+    }
+
+    #swagger.tags = ['Shelter']
+
+    #swagger.description = 'Endpoint to get a shelter by id'
+    */
+    const id: number = parseInt(req.params.id);
+    getAShelterById(id).then((shelter) => {
+        res.status(200).json(shelter);
+    }).catch((error) => {
+        console.error(error);
+        if(error instanceof HttpException) {
+            res.status(error.statusCode).json(error);
+        } else {
+            res.status(500).json(new HttpException("Internal Server Error while getting shelter", 500))
+        } 
+    });
+    
+}
