@@ -29,75 +29,73 @@ jest.mock('../../src/service/userService', () => ({
 }));
 
 describe('userRegister', () => {
-  let mockRequest: MockRequest;
-  let mockResponse: MockResponse;
+    let mockRequest: MockRequest;
+    let mockResponse: MockResponse;
 
-  beforeEach(() => {
-    mockRequest = {
-        get: jest.fn(),
-        header: jest.fn(),
-        accepts: jest.fn(),
-        acceptsCharsets: jest.fn(),
-        locals: {
-            user: {
-                email: "tests2@gmail.com",
-                password: 'strongPassword123',
-                names: 'John',
-                paternalSurname: 'Doe',
-                maternalSurname: 'Smith',
-                countryCode: 591,
-                phone: '68786565',
-                age: 20,
-                city: "La Paz",
+    beforeEach(() => {
+        mockRequest = {
+            get: jest.fn(),
+            header: jest.fn(),
+            accepts: jest.fn(),
+            acceptsCharsets: jest.fn(),
+            locals: {
+                user: {
+                    email: "tests2@gmail.com",
+                    password: 'strongPassword123',
+                    names: 'John',
+                    paternalSurname: 'Doe',
+                    maternalSurname: 'Smith',
+                    countryCode: 591,
+                    phone: '68786565',
+                    age: 20,
+                    city: "La Paz",
+                }
+            },
+        };
+
+        // Setup the mockResponse object too
+        mockResponse = {
+            status: jest.fn().mockImplementation(() => mockResponse),
+            json: jest.fn(),
+            send: jest.fn(),
+            // If your implementation uses locals on response (unusual but possible in some setups)
+            locals: {
+                
             }
-        },
-    };
+        };
+    });
 
-    // Setup the mockResponse object too
-    mockResponse = {
-        status: jest.fn().mockImplementation(() => mockResponse),
-        json: jest.fn(),
-        send: jest.fn(),
-        // If your implementation uses locals on response (unusual but possible in some setups)
-        locals: {}
-    };
-});
+    it('should register a user successfully', async () => {
+        const expectedUser: any ={
+            id: 2,
+            email: "tests2@gmail.com",
+            names: 'John',
+            paternalSurname: 'Doe',
+            maternalSurname: 'Smith',
+            countryCode: 591,
+            phone: '68786565',
+            age: 20,
+            city: "La Paz",
+            roles: [{
+                id: 3,
+                name: "user"
+            }]
+        };
 
+        // Mock the userService behavior to resolve with expectedUser
+        (userService.registerUser as jest.Mock).mockResolvedValue(expectedUser);
 
-it('should register a user successfully', async () => {
-    const expectedUser: any ={
-        id: 2,
-        email: "tests2@gmail.com",
-        names: 'John',
-        paternalSurname: 'Doe',
-        maternalSurname: 'Smith',
-        countryCode: 591,
-        phone: '68786565',
-        age: 20,
-        city: "La Paz",
-        roles: [{
-            id: 3,
-            name: "user"
-        }]
-    };
+        // Execute the function with the mocked request and response
+        await userRegister(mockRequest as any, mockResponse as any);
 
-    // Mock the userService behavior to resolve with expectedUser
-    (userService.registerUser as jest.Mock).mockResolvedValue(expectedUser);
+        // Assert that userService was called correctly
+        // expect(userService.registerUser).toHaveBeenCalledWith(expectedUser);
+        // expect(userService.registerUser).toHaveBeenCalledWith(mockRequest.locals.user);
 
-    // Execute the function with the mocked request and response
-    await userRegister(mockRequest as any, mockResponse as any);
+        // Assert that the response was handled correctly
+        // la mejor opcion seria mostrar el numero de respuesta de la consulta y mientras tanto manejarlo con los expected de la respuesta
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
 
-    // Assert that userService was called correctly
-    // expect(userService.registerUser).toHaveBeenCalledWith(expectedUser);
-    // expect(userService.registerUser).toHaveBeenCalledWith(mockRequest.locals.user);
-
-
-    // Assert that the response was handled correctly
-    // la mejor opcion seria mostrar el numero de respuesta de la consulta y mientras tanto manejarlo con los expected de la respuesta
-    expect(mockResponse.status).toHaveBeenCalledWith(200);
-
-    expect(mockResponse.json).toHaveBeenCalledWith({ user: expectedUser });
-});
-
-
+        expect(mockResponse.json).toHaveBeenCalledWith({ user: expectedUser });
+    });
 });
