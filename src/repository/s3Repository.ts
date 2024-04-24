@@ -1,5 +1,5 @@
 import s3 from "../config/awsS3"
-import { GetObjectCommand, PutObjectCommand, PutObjectCommandInput, PutObjectCommandOutput } from "@aws-sdk/client-s3"
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, PutObjectCommandInput, PutObjectCommandOutput,  } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { isBase64, isDataURI } from "class-validator"
 import { extractDataFromURI } from "../util/util"
@@ -48,6 +48,21 @@ export const uploadFile = async (path: string, fileB64OrDataURI: string): Promis
             console.log(error);
             reject(error);
         });
+    });
+}
+
+export const deleteFile = async (path: string): Promise<void> => {
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: path
+    }
+    return new Promise((resolve, reject) => {
+        s3.send(new DeleteObjectCommand(params)).then(() => {
+            resolve();
+        }).catch((error) => {
+            console.log(error);
+            reject(error);
+        })
     });
 }
 
