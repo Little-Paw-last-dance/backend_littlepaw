@@ -22,7 +22,7 @@ export const insertShelter = async (shelterDTO: ShelterRegisterDTO, queryRunner:
     const isRoot = user.roles.some((role) => role.roleName === "root");
 
     if (!hasAdminRole && !isRoot) {
-        throw new HttpException("Only users with admin or root role can create users", 400);
+        throw new HttpException("Only users with admin or root role can create shelters", 400);
     }
 
     const shelter = new Shelters();
@@ -53,7 +53,7 @@ export const updateShelter = async (id: number, shelterUpdateDTO: ShelterUpdateD
     const isRoot = user.roles.some((role) => role.roleName === "root");
 
     if (!hasAdminRole && !isRoot) {
-        throw new HttpException("Only users with admin or root role can create users", 400);
+        throw new HttpException("Only users with admin or root role can create shelters", 400);
     }
 
     const shelter = await queryRunner.manager.findOne(Shelters, { where: { id } });
@@ -98,7 +98,7 @@ export const deleteShelter = async (id: number, queryRunner: QueryRunner, userEm
     const isRoot = user.roles.some((role) => role.roleName === "root");
 
     if (!hasAdminRole && !isRoot) {
-        throw new HttpException("Only users with admin or root role can create users", 400);
+        throw new HttpException("Only users with admin or root role can create shelters", 400);
     }
 
     const shelter = await queryRunner.manager.findOne(Shelters, { where: { id } });
