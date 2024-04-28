@@ -1,15 +1,13 @@
 import User from "../entity/User";
-import Role from "../entity/Roles";
-import { UserRegisterRolesDTO } from "../model/dto/userRegisterRolesDTO";
-import { In, QueryRunner } from "typeorm";
+import { QueryRunner } from "typeorm";
 import HttpException from "../exception/HttpException";
-import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
-import { UserUpdateDTO } from "../model/dto/userUpdateDTO";
 import { PetPostRequestDTO } from "../model/dto/petPostRequestDTO";
 import Pets from "../entity/Pets";
 import PetPhotos from "../entity/PetPhotos";
 import PetPosts from "../entity/PetPosts";
 import PetStatus from "../model/petStatus";
+import Shelters from "../entity/Shelters";
+import ShelterPosts from "../entity/ShelterPosts";
 
 
 
@@ -49,4 +47,42 @@ export const insertPetPostWithPetAndPhotos = async (petPostReq: PetPostRequestDT
     const petPostSaved = await queryRunner.manager.save(PetPosts, petPost);
 
     return await queryRunner.manager.findOne(PetPosts, { where: { id: petPostSaved.id }, relations: ["pet", "pet.photos", "user"] });
+}
+
+
+export const insertPetPostWithPetAndPhotosToShelter = async (petPostReq: PetPostRequestDTO, photosPaths: string[], shelterId: number, queryRunner: QueryRunner): Promise<ShelterPosts | null> => {
+
+    const shelter = await queryRunner.manager.findOne(Shelters, { where: { id: shelterId } });
+
+    if (!shelter) {
+        throw new HttpException("Shelter not found", 404);
+    }
+
+    const pet = new Pets();
+    pet.name = petPostReq.name;
+    pet.age = petPostReq.age;
+    pet.sex = petPostReq.sex;
+    pet.breed = petPostReq.breed;
+    pet.description = petPostReq.description;
+    pet.type = petPostReq.type;
+    
+    await queryRunner.manager.save(Pets, pet);
+
+    await Promise.all(photosPaths.map(async (path) => {
+        const photo = new PetPhotos();
+        photo.photoPath = path;
+        photo.pet = pet;
+        await queryRunner.manager.save(PetPhotos, photo);
+        return photo;
+    }));
+
+    const shelterPost = new ShelterPosts();
+    shelterPost.pet = pet;
+    shelterPost.shelter = shelter;
+    shelterPost.contact = `https://api.whatsapp.com/send?phone=${shelter.countryCode}${shelter.phone}&text=I'm interested in your pet ${pet.name}`
+    shelterPost.status = PetStatus.AVAILABLE;
+
+    const shelterPostSaved = await queryRunner.manager.save(ShelterPosts, shelterPost);
+
+    return await queryRunner.manager.findOne(ShelterPosts, { where: { id: shelterPostSaved.id }, relations: ["pet", "pet.photos", "shelter"] });
 }
