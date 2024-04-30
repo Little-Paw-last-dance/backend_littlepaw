@@ -1,13 +1,15 @@
 import typeORM from "../db/dataSource";
 import {v4 as uuidv4} from 'uuid';
 import { PetPostRequestDTO } from "../model/dto/petPostRequestDTO";
-import { insertPetPostWithPetAndPhotos, insertPetPostWithPetAndPhotosToShelter } from "../repository/petRepository";
+import { findPetsByShelterId, insertPetPostWithPetAndPhotos, insertPetPostWithPetAndPhotosToShelter } from "../repository/petRepository";
 import { uploadFilesB64AndReturnPaths } from "../util/util";
 import { getSignedUrlByPath } from "../repository/s3Repository";
 import { instanceOfPetPostResponseDTO } from "../model/dto/petPostResponseDTO";
 import HttpException from "../exception/HttpException";
 import Role from "../entity/Roles";
 import { instanceOfPetShelterPostResponseDTO } from "../model/dto/petShelterPostResponseDTO";
+import { getShelterById } from "../repository/shelterRepository";
+import { instanceOfGetAllPetsInShelterResponseDTO } from "../model/dto/getAllPetsInShelterResponseDTO";
 
 export const postAPet = async (petPost: PetPostRequestDTO, userEmail: string) => {
     const queryRunner = typeORM.createQueryRunner();
@@ -70,4 +72,20 @@ export const postAPetToShelter = async (petPost: PetPostRequestDTO, shelterId: n
       } finally {
         await queryRunner.release();
       }
+}
+
+export const getAllShelterPets = async (shelterId: number) => {
+    const queryRunner = typeORM.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    const shelter = await getShelterById(shelterId, queryRunner);
+    const shelterPets = await findPetsByShelterId(shelterId, queryRunner);
+
+    if (!shelter) {
+        throw new HttpException("Shelter not found", 404);
+    }
+
+    const response = await instanceOfGetAllPetsInShelterResponseDTO(shelterPets, shelter);
+
+    return response;
 }
