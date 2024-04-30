@@ -75,17 +75,25 @@ export const postAPetToShelter = async (petPost: PetPostRequestDTO, shelterId: n
 }
 
 export const getAllShelterPets = async (shelterId: number) => {
-    const queryRunner = typeORM.createQueryRunner();
-    await queryRunner.startTransaction();
+  const queryRunner = typeORM.createQueryRunner();
 
+  try {
     const shelter = await getShelterById(shelterId, queryRunner);
     const shelterPets = await findPetsByShelterId(shelterId, queryRunner);
 
     if (!shelter) {
-        throw new HttpException("Shelter not found", 404);
+      throw new HttpException("Shelter not found", 404);
     }
 
-    const response = await instanceOfGetAllPetsInShelterResponseDTO(shelterPets, shelter);
+    const response = await instanceOfGetAllPetsInShelterResponseDTO(
+      shelterPets,
+      shelter
+    );
 
     return response;
-}
+  } catch (error) {
+    throw error;
+  } finally {
+    await queryRunner.release();
+  }
+};
