@@ -86,3 +86,7 @@ export const insertPetPostWithPetAndPhotosToShelter = async (petPostReq: PetPost
 
     return await queryRunner.manager.findOne(ShelterPosts, { where: { id: shelterPostSaved.id }, relations: ["pet", "pet.photos", "shelter"] });
 }
+
+export const findPetsByShelterId = async (shelterId: number, queryRunner: QueryRunner): Promise<ShelterPosts[]> => {
+    return await queryRunner.manager.find(ShelterPosts, { where: { shelter: { id: shelterId } }, relations: ["pet", "pet.photos", "shelter"] });
+}
