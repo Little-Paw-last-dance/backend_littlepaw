@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import HttpException from "../exception/HttpException";
-import { FirebaseUser } from "../model/firebaseUser";
 import { PetPostRequestDTO } from "../model/dto/petPostRequestDTO";
-import { postAPet, postAPetToShelter } from "../service/petService";
+import { getAllShelterPets, postAPet, postAPetToShelter } from "../service/petService";
 
 
 export const postPet = async (req: Request, res: Response) => {
@@ -84,6 +83,46 @@ export const postPetToShelter = async (req: Request, res: Response) => {
             res.status(error.statusCode).json(error);
         } else {
             res.status(500).json(new HttpException("Internal Server Error while posting a pet to a shelter", 500));
+        }
+    });
+}
+
+export const getShelterPets = async (req: Request, res: Response) => {
+    /**
+    #swagger.parameters['id'] = {
+        description: 'Shelter id',
+        in: 'path',
+        required: true,
+        type: 'integer'
+    }
+
+    #swagger.responses[200] = {
+        schema: { $ref: "#/components/schemas/GetAllPetsInShelterResponseDTO" }
+    }
+
+    #swagger.responses[400] = {
+        schema: { $ref: "#/components/schemas/HttpException" }
+    }
+
+    #swagger.tags = ['Shelter', 'Pet']
+
+    #swagger.description = 'Endpoint to get all pets of a shelter'
+    */
+    const shelterId: number = +req.params.id;
+
+    if (!shelterId || isNaN(shelterId)) {
+        res.status(400).json(new HttpException("Invalid shelter id", 400));
+        return;
+    }
+
+    getAllShelterPets(shelterId).then((pets) => {
+        res.status(200).json(pets);
+    }).catch((error) => {
+        console.error(error);
+        if (error instanceof HttpException) {
+            res.status(error.statusCode).json(error);
+        } else {
+            res.status(500).json(new HttpException("Internal Server Error while getting pets of a shelter", 500));
         }
     });
 }
