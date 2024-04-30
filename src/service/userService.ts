@@ -83,7 +83,8 @@ export const registerUser = async (user: UserRegisterDTO) => {
 
 export const getUserInfo = async (email: string) => {
   return new Promise((resolve, reject) => {
-    getUserByEmail(email, typeORM.createQueryRunner())
+    const queryRunner = typeORM.createQueryRunner();
+    getUserByEmail(email, queryRunner)
       .then((user) => {
         if (user) {
           resolve(instanceUserResponse(user));
@@ -91,13 +92,17 @@ export const getUserInfo = async (email: string) => {
           reject(new HttpException("User not found", 404));
         }
       })
-      .catch((error) => reject(error));
+      .catch((error) => {
+        console.error(error);
+        reject(error)}
+      ).finally(async () => await queryRunner.release());
   });
 };
 
 export const updateUserInfo = async (email: string, user: UserUpdateDTO) => {
   return new Promise((resolve, reject) => {
-    updateUserInfoByEmail(email, user, typeORM.createQueryRunner())
+    const queryRunner = typeORM.createQueryRunner();
+    updateUserInfoByEmail(email, user, queryRunner)
       .then((user) => {
         if (user) {
           resolve(instanceUserResponse(user));
@@ -105,14 +110,16 @@ export const updateUserInfo = async (email: string, user: UserUpdateDTO) => {
           reject(new HttpException("User not found", 404));
         }
       })
-      .catch((error) => reject(error));
+      .catch((error) => reject(error))
+      .finally(async () => await queryRunner.release());
   });
 };
 
 export const deleteUserInfo = async (firebaseUser: FirebaseUser) => {
+  const queryRunner = typeORM.createQueryRunner();
+  await queryRunner.startTransaction();
+
   try {
-    const queryRunner = typeORM.createQueryRunner();
-    await queryRunner.startTransaction();
     const user = await deleteUserInfoByEmail(firebaseUser.email, queryRunner);
     if (user) {
       await auth.deleteUser(firebaseUser.uid);
@@ -124,5 +131,7 @@ export const deleteUserInfo = async (firebaseUser: FirebaseUser) => {
     }
   } catch (error) {
     throw error;
+  } finally {
+    await queryRunner.release();
   }
 };
