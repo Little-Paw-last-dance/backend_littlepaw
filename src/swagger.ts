@@ -16,6 +16,34 @@ const doc = {
   produces: ["application/json"],
   components: {
     schemas: {
+      GetAllPetPostsResponseDTO: [
+        {
+          id: 1,
+          pet: {
+            id: 1,
+            name: "Ginger",
+            age: 1,
+            sex: Sex.FEMALE,
+            breed: "Persian",
+            description: "A very quiet cat",
+            type: PetType.CAT,
+            photos: ["base64 image 1", "base64 image 2"],
+          },
+          user: {
+            id: 1,
+            email: "user@example.com",
+            names: "John",
+            paternalSurname: "Doe",
+            maternalSurname: "Smith",
+            countryCode: 591,
+            phone: "77777777",
+            age: 25,
+            city: "La Paz",
+          },
+          contact: "https://api.whatsapp.com/send?phone=5917777777&text=I'm interested in your pet Ginger",
+          status: PetStatus.AVAILABLE,
+        },
+      ],
       GetAllPetsInShelterResponseDTO: {
         petPosts: [
           {
