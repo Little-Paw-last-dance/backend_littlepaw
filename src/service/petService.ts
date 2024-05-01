@@ -8,8 +8,9 @@ import { instanceOfPetPostResponseDTO } from "../model/dto/petPostResponseDTO";
 import HttpException from "../exception/HttpException";
 import Role from "../entity/Roles";
 import { instanceOfPetShelterPostResponseDTO } from "../model/dto/petShelterPostResponseDTO";
-import { getShelterById } from "../repository/shelterRepository";
+import { findAllPetPosts, getShelterById } from "../repository/shelterRepository";
 import { instanceOfGetAllPetsInShelterResponseDTO } from "../model/dto/getAllPetsInShelterResponseDTO";
+import { instanceOfGetAllPetsPostsResponseDTO } from "../model/dto/getAllPetPostsResponseDTO";
 
 export const postAPet = async (petPost: PetPostRequestDTO, userEmail: string) => {
     const queryRunner = typeORM.createQueryRunner();
@@ -97,3 +98,19 @@ export const getAllShelterPets = async (shelterId: number) => {
     await queryRunner.release();
   }
 };
+
+export const getAllPets = async () => {
+  const queryRunner = typeORM.createQueryRunner();
+
+  try {
+    const pets = await findAllPetPosts(queryRunner);
+
+    const response = await instanceOfGetAllPetsPostsResponseDTO(pets);
+
+    return response;
+  } catch (error) {
+    throw error;
+  } finally {
+    await queryRunner.release();
+  }
+}
