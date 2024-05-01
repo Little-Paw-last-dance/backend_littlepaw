@@ -5,6 +5,7 @@ import { ShelterRegisterDTO } from "../model/dto/shelterRegisterDTO";
 import { In, QueryRunner } from "typeorm";
 import { ShelterUpdateDTO } from "../model/dto/shelterUpdateDTO";
 import { deleteFiles } from "../util/util";
+import PetPosts from "../entity/PetPosts";
 
 export const insertShelter = async (shelterDTO: ShelterRegisterDTO, queryRunner: QueryRunner, photoPath:string, userEmail:string): Promise<Shelters> => {
 
@@ -106,4 +107,8 @@ export const deleteShelter = async (id: number, queryRunner: QueryRunner, userEm
         throw new HttpException("Shelter not found", 404);
     }
     return await queryRunner.manager.remove(shelter);
+}
+
+export const findAllPetPosts = async (queryRunner: QueryRunner): Promise<PetPosts[]> => {
+    return await queryRunner.manager.find(PetPosts, { relations: ["pet", "user", "pet.photos"] });
 }
