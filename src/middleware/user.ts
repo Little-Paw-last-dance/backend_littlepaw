@@ -6,6 +6,7 @@ import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { UserRegisterWithRolesValidation } from "../validation/userRegisterWithRolesValidation";
 import { UserUpdateDTO } from "../model/dto/userUpdateDTO";
 import { UserUpdateValidation } from "../validation/userUpdateValidation";
+import logger from "../config/logger";
 
 export const userRegisterWithRolesValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const userRegisterRequest: UserRegisterRolesDTO = req.body;
@@ -20,6 +21,7 @@ export const userRegisterWithRolesValidationMiddleware = (req: Request, res: Res
                     constraints: error.constraints
                 }
             })
+            logger.error('Validation errors: %o', errorsResponse)
             res.status(400).json({errors: { validationErrors: errorsResponse }})
         } else {
             res.locals.user = validUser
@@ -41,6 +43,7 @@ export const userRegisterValidationMiddleware = (req: Request, res: Response, ne
                     constraints: error.constraints
                 }
             })
+            logger.error('Validation errors: %o', errorsResponse)
             res.status(400).json({errors: { validationErrors: errorsResponse }})
         } else {
             res.locals.user = validUser
@@ -62,6 +65,7 @@ export const userUpdateValidationMiddleware = (req: Request, res: Response, next
                     constraints: error.constraints
                 }
             })
+            logger.error('Validation errors: %o', errorsResponse)
             res.status(400).json({errors: { validationErrors: errorsResponse }})
         } else {
             res.locals.user = validUserUpdate

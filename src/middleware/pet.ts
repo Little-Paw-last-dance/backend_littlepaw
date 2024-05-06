@@ -2,7 +2,7 @@ import {validate} from "class-validator"
 import {Request, Response, NextFunction} from "express"
 import { PetPostRequestDTO } from "../model/dto/petPostRequestDTO";
 import { PetPostValidation } from "../validation/petPostValidation";
-
+import logger from "../config/logger";
 
 export const petPostValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const petPostRequest: PetPostRequestDTO = req.body;
@@ -17,6 +17,7 @@ export const petPostValidationMiddleware = (req: Request, res: Response, next: N
                     constraints: error.constraints
                 }
             })
+            logger.error('Validation errors: %o', errorsResponse)
             res.status(400).json({errors: { validationErrors: errorsResponse }})
         } else {
             res.locals.petPost = validPetPost

@@ -8,7 +8,7 @@ import PetPosts from "../entity/PetPosts";
 import PetStatus from "../model/petStatus";
 import Shelters from "../entity/Shelters";
 import ShelterPosts from "../entity/ShelterPosts";
-
+import logger from "../config/logger";
 
 
 export const insertPetPostWithPetAndPhotos = async (petPostReq: PetPostRequestDTO, photosPaths: string[], userEmail: string, queryRunner: QueryRunner): Promise<PetPosts | null> => {
@@ -16,6 +16,7 @@ export const insertPetPostWithPetAndPhotos = async (petPostReq: PetPostRequestDT
     const user = await queryRunner.manager.findOne(User, { where: { email: userEmail } });
 
     if (!user) {
+        logger.error(`User not found with email: %s`, userEmail);
         throw new HttpException("User not found", 404);
     }
 
@@ -28,7 +29,7 @@ export const insertPetPostWithPetAndPhotos = async (petPostReq: PetPostRequestDT
     pet.type = petPostReq.type;
 
     await queryRunner.manager.save(Pets, pet);
-
+    logger.info(`Pet created with ID: ${pet.id}`);
 
     await Promise.all(photosPaths.map(async (path) => {
         const photo = new PetPhotos();
@@ -37,6 +38,7 @@ export const insertPetPostWithPetAndPhotos = async (petPostReq: PetPostRequestDT
         await queryRunner.manager.save(PetPhotos, photo);
         return photo;
     }));
+    logger.info(`Photos uploaded for Pet ID: ${pet.id}`);
 
     const petPost = new PetPosts();
     petPost.pet = pet;
@@ -45,6 +47,7 @@ export const insertPetPostWithPetAndPhotos = async (petPostReq: PetPostRequestDT
     petPost.status = PetStatus.AVAILABLE;
 
     const petPostSaved = await queryRunner.manager.save(PetPosts, petPost);
+    logger.info(`Pet post created with ID: ${petPostSaved.id}`);
 
     return await queryRunner.manager.findOne(PetPosts, { where: { id: petPostSaved.id }, relations: ["pet", "pet.photos", "user"] });
 }
@@ -55,6 +58,7 @@ export const insertPetPostWithPetAndPhotosToShelter = async (petPostReq: PetPost
     const shelter = await queryRunner.manager.findOne(Shelters, { where: { id: shelterId } });
 
     if (!shelter) {
+        logger.error(`Shelter not found with ID: %d`, shelterId);
         throw new HttpException("Shelter not found", 404);
     }
 
@@ -67,6 +71,7 @@ export const insertPetPostWithPetAndPhotosToShelter = async (petPostReq: PetPost
     pet.type = petPostReq.type;
     
     await queryRunner.manager.save(Pets, pet);
+    logger.info(`Pet created with ID: ${pet.id}`);
 
     await Promise.all(photosPaths.map(async (path) => {
         const photo = new PetPhotos();
@@ -75,6 +80,7 @@ export const insertPetPostWithPetAndPhotosToShelter = async (petPostReq: PetPost
         await queryRunner.manager.save(PetPhotos, photo);
         return photo;
     }));
+    logger.info(`Photos uploaded for Pet ID: ${pet.id}`);
 
     const shelterPost = new ShelterPosts();
     shelterPost.pet = pet;
@@ -83,6 +89,7 @@ export const insertPetPostWithPetAndPhotosToShelter = async (petPostReq: PetPost
     shelterPost.status = PetStatus.AVAILABLE;
 
     const shelterPostSaved = await queryRunner.manager.save(ShelterPosts, shelterPost);
+    logger.info(`Pet post created with ID: ${shelterPostSaved.id}`);
 
     return await queryRunner.manager.findOne(ShelterPosts, { where: { id: shelterPostSaved.id }, relations: ["pet", "pet.photos", "shelter"] });
 }

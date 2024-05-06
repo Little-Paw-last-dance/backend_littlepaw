@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
 import mysqlConfig from '../config/mysqlConfig';
+import logger from "../config/logger";
 
 const typeORM = new DataSource({
     type: "mysql",
@@ -20,9 +21,9 @@ const typeORM = new DataSource({
 })
 
 typeORM.initialize().then(() => {
-    console.log(`Connection to Database "${mysqlConfig.DB}" on "${mysqlConfig.HOST}:${mysqlConfig.PORT}" with user "${mysqlConfig.USER}" established successfully`);
+    logger.info(`Connection to Database "${mysqlConfig.DB}" on "${mysqlConfig.HOST}:${mysqlConfig.PORT}" with user "${mysqlConfig.USER}" established successfully`);
 }).catch((error) => {
-    console.log("Error connecting to database", error)
+    logger.error('Error establishing connection to database: %o', error);
 });
 
 export default typeORM;

@@ -4,6 +4,7 @@ import { ShelterRegisterDTO } from '../model/dto/shelterRegisterDTO';
 import { ShelterRegisterValidation } from '../validation/shelterRegisterValidation';
 import { ShelterUpdateDTO } from '../model/dto/shelterUpdateDTO';
 import { ShelterUpdateValidation } from '../validation/shelterUpdateValidation';
+import logger from '../config/logger';
 
 export const shelterRegisterValidationMiddleware =  (req: Request, res: Response, next: NextFunction) => {
     const shelterRegisterDTO: ShelterRegisterDTO = req.body;
@@ -17,6 +18,7 @@ export const shelterRegisterValidationMiddleware =  (req: Request, res: Response
                     constraints: error.constraints
                 }
             })
+            logger.error('Validation errors: %o', errorsResponse)
             res.status(400).json({errors: {validationErrors: errorsResponse}})
         } else {
             res.locals.shelterRegister = validShelterRegister;
@@ -37,6 +39,7 @@ export const shelterUpdateValidationMiddleware =  (req: Request, res: Response, 
                     constraints: error.constraints
                 }
             })
+            logger.error('Validation errors: %o', errorsResponse)
             res.status(400).json({errors: {validationErrors: errorsResponse}})
         } else {
             res.locals.shelterUpdate = validShelterUpdate;
