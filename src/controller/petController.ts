@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import HttpException from "../exception/HttpException";
 import { PetPostRequestDTO } from "../model/dto/petPostRequestDTO";
 import { getAllPets, getAllShelterPets, postAPet, postAPetToShelter } from "../service/petService";
-
+import logger from '../config/logger';
 
 export const postPet = async (req: Request, res: Response) => {
     /**
@@ -29,8 +29,9 @@ export const postPet = async (req: Request, res: Response) => {
 
     postAPet(petPost, userEmail).then((petPost) => {
         res.status(200).json(petPost);
+        logger.info('Pet posted successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error posting a pet: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -71,14 +72,16 @@ export const postPetToShelter = async (req: Request, res: Response) => {
     const roles = res.locals.roles;
 
     if (!shelterId || isNaN(shelterId)) {
+        logger.warn('Invalid shelter id provided');
         res.status(400).json(new HttpException("Invalid shelter id", 400));
         return;
     }
 
     postAPetToShelter(petPost, shelterId, roles).then((petPost) => {
         res.status(200).json(petPost);
+        logger.info('Pet posted to shelter successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error posting a pet to a shelter: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -111,14 +114,16 @@ export const getShelterPets = async (req: Request, res: Response) => {
     const shelterId: number = +req.params.id;
 
     if (!shelterId || isNaN(shelterId)) {
+        logger.warn('Invalid shelter id provided');
         res.status(400).json(new HttpException("Invalid shelter id", 400));
         return;
     }
 
     getAllShelterPets(shelterId).then((pets) => {
         res.status(200).json(pets);
+        logger.info('Retrieved all pets from shelter');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error getting pets of a shelter: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -143,8 +148,9 @@ export const getPets = async (req: Request, res: Response) => {
     */
     getAllPets().then((pets) => {
         res.status(200).json(pets);
+        logger.info('Retrieved all pets');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error getting pets: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {

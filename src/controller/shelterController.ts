@@ -3,6 +3,8 @@ import {Request, Response} from "express";
 import { registerAShelter, getAShelterById, getAllTheShelters, deleteAShelter, updateAShelter } from "../service/shelterService";
 import HttpException from "../exception/HttpException";
 import { ShelterUpdateDTO } from "../model/dto/shelterUpdateDTO";
+import logger from "../config/logger";
+
 export const registerShelter = async (req: Request, res: Response) => {
     /**
     #swagger.requestBody = {
@@ -27,8 +29,9 @@ export const registerShelter = async (req: Request, res: Response) => {
     const userEmail: string = res.locals.firebaseUser.email;
     registerAShelter(shelterRegisterDTO, userEmail).then((shelter) => {
         res.status(200).json(shelter);
+        logger.info('Shelter registered successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error registering a shelter: %o', error);
         if(error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -63,8 +66,9 @@ export const updateShelter = async (req: Request, res: Response) => {
     const userEmail: string = res.locals.firebaseUser.email;
     updateAShelter(id, shelterUpdateDTO, userEmail).then((shelter) => {
         res.status(200).json(shelter);
+        logger.info('Shelter updated successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error updating a shelter: %o', error);
         if(error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -91,8 +95,9 @@ export const getShelter = async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id);
     getAShelterById(id).then((shelter) => {
         res.status(200).json(shelter);
+        logger.info('Shelter retrieved successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error getting a shelter: %o', error);
         if(error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -120,8 +125,9 @@ export const getAllShelters = async (req: Request, res: Response) => {
 
     getAllTheShelters().then((shelters) => {
         res.status(200).json(shelters);
+        logger.info('Retrieved all shelters');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error getting shelters: %o', error);
         if(error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -149,8 +155,9 @@ export const deleteShelter = async (req: Request, res: Response) => {
     const userEmail: string = res.locals.firebaseUser.email;
     deleteAShelter(id, userEmail).then((shelter) => {
         res.status(200).json(shelter);
+        logger.info('Shelter deleted successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error deleting a shelter: %o', error);
         if(error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
