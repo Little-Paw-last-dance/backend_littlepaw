@@ -1,4 +1,5 @@
 # Backend Little Paw
+
 ## Estructura del Proyecto
 ### src/config
 El directorio [`src/config`](src/config/) contiene configuraciones esenciales para la aplicación:
@@ -14,6 +15,35 @@ Archivo [`corsOptions.ts`](src/config/corsOptions.ts): Define las políticas COR
 
 #### Firebase
 Archivo [`firebaseConfig.ts`](src/config/firebaseConfig.ts): Inicializa Firebase utilizando configuraciones seguras, adecuadas para la autenticación y otras funcionalidades. Configura las variables de entorno relacionadas con Firebase, incluyendo `FIREBASE_TYPE`, `FIREBASE_PROJECT_ID`, `FIREBASE_PRIVATE_KEY`, etc.
+
+### logger
+Archivo [`logger.ts`](src/config/logger.ts): Configura el logger centralizado utilizando la biblioteca Pino. Este logger se usa en todo el proyecto para capturar y almacenar registros de actividad, errores y otros mensajes importantes.
+
+*Características:*
+- **Niveles de Logueo**: Soporta múltiples niveles de logueo como `fatal`, `error`, `warn`, `info`, `debug` y `trace`.
+- **Formato de Timestamp**: Utiliza timestamps en formato ISO 8601 para facilitar la legibilidad y el seguimiento temporal en entornos de desarrollo y producción.
+- **Personalización del Nivel de Log**: Los niveles de logueo se muestran en formato textual para mejorar la legibilidad durante el desarrollo y las pruebas. Es bueno saber igual lo siguiente:
+  - `fatal`: 10
+  - `error`: 20
+  - `warn`: 30
+  - `info`: 30
+  - `debug`: 40
+  - `trace`: 50
+
+##### Configuración de Transporte:
+- **Consola**: Configurada para mostrar logs en la consola con colores y formato legible durante el desarrollo.
+- **Archivos de Log**: Los logs también se redirigen a archivos específicos basados en el nivel de severidad. Por ejemplo, todos los logs de nivel `error` se almacenan en `error.log`, mientras que la información general se guarda en `combined.log`.
+
+##### Ejemplo de Uso:
+Para usar el logger, simplemente importa y llama al logger desde cualquier archivo:
+```typescript
+import logger from './config/logger';
+
+logger.info('Mensaje informativo');
+logger.error('Mensaje de error');
+```
+
+
 
 ### src/controller
 Los controladores en [`src/controller`](src/controller/) gestionan las interacciones entre la API y los servicios, organizando la lógica de negocio según los diferentes recursos de la aplicación.

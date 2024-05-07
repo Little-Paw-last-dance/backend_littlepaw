@@ -5,6 +5,7 @@ import HttpException from "../exception/HttpException";
 import { FirebaseUser } from "../model/firebaseUser";
 import { UserRegisterDTO } from "../model/dto/userRegisterDTO";
 import { UserUpdateDTO } from "../model/dto/userUpdateDTO";
+import logger from "../config/logger";
 
 
 export const userRegisterWithRoles = async (req: Request, res: Response) => {
@@ -32,8 +33,9 @@ export const userRegisterWithRoles = async (req: Request, res: Response) => {
 
     registerUserWithRoles(userRegisterRequest, roles).then((user) => {
         res.status(200).json({ user });
+        logger.info('User registered successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error registering a user: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -66,8 +68,9 @@ export const userRegister = async (req: Request, res: Response) => {
 
     registerUser(userRegisterRequest).then((user) => {
         res.status(200).json({ user });
+        logger.info('User registered successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error registering a user: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -94,8 +97,9 @@ export const getUser = async (req: Request, res: Response) => {
 
     getUserInfo(firebaseUser.email).then((user) => {
         res.status(200).json({ user });
+        logger.info('User information retrieved successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error getting user information: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -129,8 +133,9 @@ export const updateUser = async (req: Request, res: Response) => {
 
     updateUserInfo(userEmail, userUpdateRequest).then((user) => {
         res.status(200).json({ user });
+        logger.info('User information updated successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error updating user information: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
@@ -157,8 +162,9 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     deleteUserInfo(firebaseUser).then((user) => {
         res.status(200).json({ user });
+        logger.info('User deleted successfully');
     }).catch((error) => {
-        console.error(error);
+        logger.error('Error deleting user: %o', error);
         if (error instanceof HttpException) {
             res.status(error.statusCode).json(error);
         } else {
