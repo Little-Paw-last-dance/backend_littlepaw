@@ -16,7 +16,7 @@ Archivo [`corsOptions.ts`](src/config/corsOptions.ts): Define las políticas COR
 #### Firebase
 Archivo [`firebaseConfig.ts`](src/config/firebaseConfig.ts): Inicializa Firebase utilizando configuraciones seguras, adecuadas para la autenticación y otras funcionalidades. Configura las variables de entorno relacionadas con Firebase, incluyendo `FIREBASE_TYPE`, `FIREBASE_PROJECT_ID`, `FIREBASE_PRIVATE_KEY`, etc.
 
-### logger
+#### logger
 Archivo [`logger.ts`](src/config/logger.ts): Configura el logger centralizado utilizando la biblioteca Pino. Este logger se usa en todo el proyecto para capturar y almacenar registros de actividad, errores y otros mensajes importantes.
 
 *Características:*
@@ -163,6 +163,245 @@ El [`ShelterPosts`](/src/entity/ShelterPosts.ts) hace publicaciones realizadas p
   - `status`: Estado de la publicación o de la mascota en el momento de la publicación.
 
 Estas entidades son vitales para la estructura de datos del sistema y permiten una administración eficaz y escalable conforme crece el alcance del proyecto.
+
+### src/exception
+#### HttpException
+El [`HttpException`](/src/exception/HttpException.ts) extiende la clase estándar `Error` de JavaScript para manejar errores con información adicional como el código de estado HTTP y detalles específicos del error.
+- **Campos**:
+  - `statusCode`: Código de estado HTTP asociado con la excepción.
+  - `message`: Mensaje descriptivo de la excepción.
+  - `errors`: Objeto opcional que puede contener detalles adicionales sobre los errores específicos.
+
+### src/middleware
+El directorio [`src/middleware`](/src/middleware/) contiene middleware personalizados para la validación de datos y la autenticación de usuarios.
+
+#### authValidation
+El archivo [`authValidation.ts`](/src/middleware/authValidation.ts) maneja la autenticación de los usuarios a través de tokens y asigna roles a los usuarios verificados.
+- **Funciones**:
+  - `authenticationValidation`: Valida tokens de acceso para autenticar usuarios.
+  - `getRoles`: Recupera y adjunta roles al usuario autenticado para su uso posterior en el ciclo de solicitud.
+
+#### pet
+El archivo [`pet.ts`](/src/middleware/pet.ts) incluye middleware para validar la creación de publicaciones de mascotas.
+- **Funciones**:
+  - `petPostValidationMiddleware`: Valida los datos de entrada para publicaciones de mascotas utilizando `class-validator` antes de proceder al manejo de la solicitud.
+
+#### shelter
+El archivo [`shelter.ts`](/src/middleware/shelter.ts) proporciona middleware para validar el registro y actualización de refugios.
+- **Funciones**:
+  - `shelterRegisterValidationMiddleware`: Valida los datos de registro de refugios.
+  - `shelterUpdateValidationMiddleware`: Valida los datos de actualización para refugios existentes.
+
+#### user
+El archivo [`user.ts`](/src/middleware/user.ts) contiene middleware para la validación de registro y actualización de usuarios.
+- **Funciones**:
+  - `userRegisterWithRolesValidationMiddleware`: Valida el registro de nuevos usuarios, incluyendo roles específicos.
+  - `userRegisterValidationMiddleware`: Valida el registro de usuarios sin roles específicos.
+  - `userUpdateValidationMiddleware`: Valida la actualización de datos de usuarios existentes.
+
+### src/model
+El directorio [`src/model`](/src/model/) contiene definiciones de tipos y enumerados utilizados en todo el proyecto para mantener la consistencia y facilitar la comprensión del código.
+#### FirebaseUser
+El archivo [`firebaseUser.ts`](/src/model/firebaseUser.ts) define el tipo `FirebaseUser` que modela los datos del usuario autenticado mediante Firebase.
+- **Campos**:
+  - `iss`: Emisor del token.
+  - `aud`: Audiencia del token.
+  - `auth_time`: Tiempo de autenticación.
+  - `user_id`: Identificador único del usuario.
+  - `sub`: Sujeto del token.
+  - `iat`: Tiempo de emisión del token.
+  - `exp`: Tiempo de expiración del token.
+  - `email`: Correo electrónico del usuario.
+  - `email_verified`: Indica si el correo está verificado.
+  - `firebase`: Contiene información específica de Firebase como `identities` y `sign_in_provider`.
+
+#### PetStatus
+El archivo [`petStatus.ts`](/src/model/petStatus.ts) define un enumerado `PetStatus` que representa el estado de la mascota.
+- **Valores**:
+  - `AVAILABLE`: La mascota está disponible.
+  - `ADOPTED`: La mascota ha sido adoptada.
+
+#### Sex
+El archivo [`sex.ts`](/src/model/sex.ts) define un enumerado `Sex` para especificar el sexo de una mascota.
+- **Valores**:
+  - `MALE`: Masculino.
+  - `FEMALE`: Femenino.
+
+#### PetType
+El archivo [`petType.ts`](/src/model/petType.ts) define un enumerado `PetType` que categoriza tipos de mascotas.
+- **Valores**:
+  - `DOG`: Perro.
+  - `CAT`: Gato.
+  - `BIRD`: Ave.
+  - `REPTILE`: Reptil.
+  - `RABBIT`: Conejo.
+  - `OTHER`: Otros tipos de mascotas.
+
+#### dto
+El directorio [`src/model/dto`](/src/model/dto/) contiene objetos de transferencia de datos (DTO) que se utilizan para transferir datos entre la API y los servicios.
+
+##### UserRegisterDTO
+Archivo: [`userRegisterDTO.ts`](/src/model/dto/userRegisterDTO.ts)
+- **Descripción**: Define los datos necesarios para registrar un usuario.
+- **Campos**:
+  - `email`: Dirección de correo del usuario.
+  - `password`: Contraseña del usuario.
+  - `names`: Nombres del usuario.
+  - `paternalSurname`: Apellido paterno.
+  - `maternalSurname`: Apellido materno.
+  - `countryCode`: Código del país.
+  - `phone`: Número de teléfono.
+  - `age`: Edad.
+  - `city`: Ciudad.
+
+##### UserRegisterRolesDTO
+Archivo: [`userRegisterRolesDTO.ts`](/src/model/dto/userRegisterRolesDTO.ts)
+- **Descripción**: Datos para registrar un usuario con roles específicos.
+- **Campos**:
+  - `roles`: Roles del usuario.
+  - Incluye todos los campos de `UserRegisterDTO`.
+
+##### ShelterRegisterDTO
+Archivo: [`shelterRegisterDTO.ts`](/src/model/dto/shelterRegisterDTO.ts)
+- **Descripción**: Datos necesarios para registrar un refugio.
+- **Campos**:
+  - `name`: Nombre del refugio.
+  - `location`: Ubicación.
+  - `urlPage`: Página web.
+  - `countryCode`: Código del país.
+  - `phone`: Teléfono.
+  - `photo`: Foto del refugio.
+
+##### ShelterUpdateDTO
+Archivo: [`shelterUpdateDTO.ts`](/src/model/dto/shelterUpdateDTO.ts)
+- **Descripción**: Datos para actualizar la información de un refugio.
+- **Campos**: Mismos que `ShelterRegisterDTO`, pero todos son opcionales.
+
+##### PetPostRequestDTO
+Archivo: [`petPostRequestDTO.ts`](/src/model/dto/petPostRequestDTO.ts)
+- **Descripción**: Datos para publicar una nueva mascota.
+- **Campos**:
+  - `name`: Nombre de la mascota.
+  - `age`: Edad.
+  - `sex`: Sexo.
+  - `breed`: Raza.
+  - `description`: Descripción.
+  - `type`: Tipo de mascota.
+  - `photos`: Fotos de la mascota.
+
+##### PetPostResponseDTO
+Archivo: [`petPostResponseDTO.ts`](/src/model/dto/petPostResponseDTO.ts)
+- **Descripción**: Estructura de la respuesta de una publicación de mascota.
+- **Campos**:
+  - `id`: ID de la publicación.
+  - `pet`: Datos detallados de la mascota.
+  - `user`: Datos del usuario que realiza la publicación.
+  - `contact`: Información de contacto.
+  - `status`: Estado de la mascota.
+
+##### PetShelterPostResponseDTO
+Archivo: [`petShelterPostResponseDTO.ts`](/src/model/dto/petShelterPostResponseDTO.ts)
+- **Descripción**: Respuesta detallada de una publicación de mascota en un refugio.
+- **Campos**:
+  - `id`: ID de la publicación.
+  - `pet`: Datos de la mascota.
+  - `shelter`: Datos del refugio.
+  - `contact`: Información de contacto.
+  - `status`: Estado de la mascota.
+
+##### ShelterResponse
+Archivo: [`shelterResponse.ts`](/src/model/dto/shelterResponse.ts)
+- **Descripción**: Datos de respuesta para un refugio.
+- **Campos**:
+  - `id`: ID del refugio.
+  - `name`: Nombre.
+  - `location`: Ubicación.
+  - `urlPage`: Página web.
+  - `countryCode`: Código del país.
+  - `phone`: Teléfono.
+  - `photo`: Foto.
+
+##### GetAllPetPostsResponseDTO
+Archivo: [`getAllPetPostsResponseDTO.ts`](/src/model/dto/getAllPetPostsResponseDTO.ts)
+- **Descripción**: Respuesta para la consulta de todas las publicaciones de mascotas.
+- **Campos**:
+  - `id`: ID de la publicación.
+  - `pet`: Información detallada de la mascota.
+  - `user`: Información del usuario que publica.
+  - `contact`: Información de contacto.
+  - `status`: Estado de la publicación.
+
+##### GetAllPetsInShelterResponseDTO
+Archivo: [`getAllPetsInShelterResponseDTO.ts`](/src/model/dto/getAllPetsInShelterResponseDTO.ts)
+- **Descripción**: Respuesta para la consulta de todas las mascotas en un refugio.
+- **Campos**:
+  - `petPosts`: Lista de publicaciones de mascotas en el refugio.
+  - `shelter`: Datos del refugio.
+
+##### UserUpdateDTO
+Archivo: [`userUpdateDTO.ts`](/src/model/dto/userUpdateDTO.ts)
+- **Descripción**: Define los datos para actualizar un usuario existente.
+- **Campos**:
+  - `names`: Nombres del usuario.
+  - `paternalSurname`: Apellido paterno.
+  - `maternalSurname`: Apellido materno.
+  - `countryCode`: Código del país.
+  - `phone`: Número de teléfono.
+  - `age`: Edad.
+  - `city`: Ciudad.
+
+##### UserResponse
+Archivo: [`userResponse.ts`](/src/model/dto/userResponse.ts)
+- **Descripción**: Estructura de la respuesta para los datos de un usuario.
+- **Campos**:
+  - `id`: Identificador único del usuario.
+  - `email`: Dirección de correo electrónico.
+  - `names`: Nombres del usuario.
+  - `paternalSurname`: Apellido paterno.
+  - `maternalSurname`: Apellido materno.
+  - `countryCode`: Código del país.
+  - `phone`: Número de teléfono.
+  - `age`: Edad.
+  - `city`: Ciudad.
+  - `roles`: Lista de roles asignados al usuario, cada uno con `id` y `name`.
+
+### src/repository
+El directorio [`src/repository`](/src/repository/) contiene clases que encapsulan la lógica de acceso a la base de datos y simplifican las operaciones CRUD en las entidades.
+
+#### s3Repository
+El archivo [`s3Repository.ts`](/src/repository/s3Repository.ts) contiene funciones para interactuar con AWS S3, incluyendo subir, eliminar y obtener URLs firmadas de archivos.
+- **Funciones Principales**:
+  - `uploadFile`: Sube un archivo a S3.
+  - `deleteFile`: Elimina un archivo de S3.
+  - `getSignedUrlByPath`: Genera una URL firmada para acceso público a un archivo por un tiempo limitado.
+
+#### userRepository
+El archivo: [`userRepository.ts`](/src/repository/userRepository.ts) maneja operaciones relacionadas con usuarios en la base de datos.
+- **Funciones Principales**:
+  - `insertUserWithRoles`: Inserta un nuevo usuario con roles específicos.
+  - `insertUser`: Inserta un nuevo usuario sin roles específicos.
+  - `getUserByEmail`: Busca un usuario por correo electrónico.
+  - `updateUserInfoByEmail`: Actualiza la información de un usuario.
+  - `deleteUserInfoByEmail`: Elimina un usuario por correo electrónico.
+
+#### petRepository
+El archivo [`petRepository.ts`](/src/repository/petRepository.ts) gestiona operaciones de base de datos relacionadas con mascotas, incluyendo la creación de publicaciones y la gestión de fotos de mascotas.
+- **Funciones Principales**:
+  - `insertPetPostWithPetAndPhotos`: Crea una nueva mascota con fotos y una publicación asociada.
+  - `insertPetPostWithPetAndPhotosToShelter`: Asigna una mascota y fotos a un refugio y crea una publicación.
+  - `findPetsByShelterId`: Encuentra todas las publicaciones de mascotas asociadas a un refugio específico.
+
+#### shelterRepository
+El archivo [`shelterRepository.ts`](/src/repository/shelterRepository.ts) es encargado de las operaciones de base de datos para los refugios, incluyendo la creación, actualización y eliminación de refugios.
+- **Funciones Principales**:
+  - `insertShelter`: Inserta un nuevo refugio.
+  - `updateShelter`: Actualiza un refugio existente.
+  - `getShelterById`: Recupera un refugio por su ID.
+  - `getAllShelters`: Obtiene todos los refugios registrados.
+  - `deleteShelter`: Elimina un refugio.
+
+### src/route
+
 
 ## LICENSE
 <!DOCTYPE html>
