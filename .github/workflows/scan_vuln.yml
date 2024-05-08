@@ -23,12 +23,12 @@ jobs:
 
       - name: Discover Subdomains with Gobuster
         run: |
-          gobuster -e -u https://main.d3jn59dldttup9.amplifyapp.com/welcome -w wordlist.txt -o subdomains.txt
+          gobuster -e -u https://main.d3jn59dldttup9.amplifyapp.com -w wordlist.txt -o subdomains.txt -fw
 
       - name: Nikto Scan on Main Domain and Subdomains
         run: |
           echo "Scanning main domain"
-          nikto -h https://main.d3jn59dldttup9.amplifyapp.com/welcome -output main-nikto-report.html -Format htm
+          nikto -h https://main.d3jn59dldttup9.amplifyapp.com -output main-nikto-report.html -Format htm
           while read subdomain; do
             echo "Scanning subdomain: $subdomain"
             nikto -h $subdomain -output "${subdomain//./_}-nikto-report.html" -Format htm
