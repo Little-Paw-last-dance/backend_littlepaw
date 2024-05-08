@@ -38,6 +38,13 @@ jobs:
           nmap -sV --script vulners -oX nmap-report.xml https://main.d3jn59dldttup9.amplifyapp.com/welcome
           python3 -c "import xml.etree.ElementTree as ET; import json; print(json.dumps(ET.tostring(ET.parse('nmap-report.xml').getroot()).decode(), indent=4))" > nmap-report.json
 
+      - name: Convert JSON to HTML using SploitScan
+        run: |
+          git clone https://github.com/xaitax/SploitScan.git
+          cd SploitScan
+          python3 sploitscan.py -i ../nmap-report.json -o nmap-report.html
+          cd ..
+
       - name: Send Nikto HTML Report to Discord
         run: |
           curl -H "Content-Type: multipart/form-data" \
