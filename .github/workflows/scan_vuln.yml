@@ -23,6 +23,16 @@ jobs:
           nikto -h https://main.d3jn59dldttup9.amplifyapp.com/welcome -output nikto-report.html -Format htm -Tuning 24789d
           cat nikto-report.html
 
+      - name: Add Tuning Titles to HTML Report
+        run: |
+          sed -i 's|Identifying information indicating test 2|<h2>Test 2: Misconfiguration / Default File</h2>&|g' nikto-report.html
+          sed -i 's|Description for test 4|<h2>Test 4: Injection (XSS/Script/HTML)</h2>&|g' nikto-report.html
+          sed -i 's|Output suggesting test 7|<h2>Test 7: Remote File Retrieval - Server Wide</h2>&|g' nikto-report.html
+          sed -i 's|Information related to test 8|<h2>Test 8: Command Execution / Remote Shell</h2>&|g' nikto-report.html
+          sed -i 's|Data for test 9|<h2>Test 9: SQL Injection</h2>&|g' nikto-report.html
+          sed -i 's|Details showing test d|<h2>Test D: WebService</h2>&|g' nikto-report.html
+          echo "Titles added based on tuning tests."
+
       - name: Send HTML Report to Discord
         run: |
           curl -H "Content-Type: multipart/form-data" \
