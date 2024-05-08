@@ -6,39 +6,26 @@ on:
     branches: ["main"]
 
 jobs:
-  report_to_discord:
+  scan_and_report:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Nikto and Gobuster
+      - name: Install Nikto
         run: |
           sudo apt-get update
-          sudo apt-get install -y nikto gobuster
+          sudo apt-get install -y nikto
 
-      - name: Download Wordlist
+      - name: Nikto Scan with Specific Tuning Options
         run: |
-          curl -L -o wordlist.txt https://raw.githubusercontent.com/v0re/dirb/master/wordlists/common.txt
-
-      - name: Discover Subdomains with Gobuster
-        run: |
-          gobuster -e -u https://main.d3jn59dldttup9.amplifyapp.com -w wordlist.txt -o subdomains.txt -fw
-
-      - name: Nikto Scan on Main Domain and Subdomains
-        run: |
-          echo "Scanning main domain"
-          nikto -h https://main.d3jn59dldttup9.amplifyapp.com -output main-nikto-report.html -Format htm
-          while read subdomain; do
-            formatted_subdomain=$(echo "$subdomain" | tr './:' '_')
-            echo "Scanning subdomain: $subdomain"
-            nikto -h "$subdomain" -output "${formatted_subdomain}-nikto-report.html" -Format htm
-          done < subdomains.txt
-          cat *.html > combined-report.html
+          echo "Scanning main domain with specific tuning options"
+          nikto -h https://main.d3jn59dldttup9.amplifyapp.com -output nikto-report.html -Format htm -Tuning 4789d
+          cat nikto-report.html
 
       - name: Send HTML Report to Discord
         run: |
           curl -H "Content-Type: multipart/form-data" \
-               -F "payload_json={\"content\": \"Nikto Scan Report Attached.\"}" \
-               -F "file=@combined-report.html" \
+               -F "payload_json={\"content\": \"Nikto Scan Report with Specific Tuning Options Attached.\"}" \
+               -F "file=@nikto-report.html" \
                ${{ secrets.DISCORD_WEBHOOK }}
