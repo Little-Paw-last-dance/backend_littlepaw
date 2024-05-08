@@ -17,11 +17,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nikto
 
-      - name: Nikto Scan with Specific Tuning Options
+      - name: Nikto Advanced Scan on Main Domain
         run: |
-          echo "Scanning main domain with specific tuning options"
-          nikto -h https://main.d3jn59dldttup9.amplifyapp.com -output nikto-report.html -Format htm -Tuning 4789d
-          cat nikto-report.html
+          echo "Advanced scanning on main domain"
+          nikto -h https://main.d3jn59dldttup9.amplifyapp.com \
+                -output nikto-advanced-report.html \
+                -Format htm \
+                -Tuning 4,7,8,9,d \
+                -FollowRedirects \
+                -ssl \
+                -Display V \
+                -Evasion 7
+          echo "Scan complete. Report generated."
 
       - name: Send HTML Report to Discord
         run: |
