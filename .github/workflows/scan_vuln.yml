@@ -30,8 +30,9 @@ jobs:
           echo "Scanning main domain"
           nikto -h https://main.d3jn59dldttup9.amplifyapp.com -output main-nikto-report.html -Format htm
           while read subdomain; do
+            formatted_subdomain=$(echo "$subdomain" | tr './:' '_')
             echo "Scanning subdomain: $subdomain"
-            nikto -h $subdomain -output "${subdomain//./_}-nikto-report.html" -Format htm
+            nikto -h "$subdomain" -output "${formatted_subdomain}-nikto-report.html" -Format htm
           done < subdomains.txt
           cat *.html > combined-report.html
 
