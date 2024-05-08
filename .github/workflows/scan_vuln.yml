@@ -41,6 +41,12 @@ jobs:
           nmap -sV --script vulners -oX nmap-report2.xml main.d3jn59dldttup9.amplifyapp.com
           echo "Nmap vulners scan report generated."
 
+      - name: Convert XML Reports to HTML
+        run: |
+          xsltproc -o nmap-report1.html nmap-report1.xml
+          xsltproc -o nmap-report2.html nmap-report2.xml
+          echo "Nmap reports converted to HTML."
+
       # - name: Convert JSON to CSV using SploitScan
       #   run: |
       #     git clone https://github.com/xaitax/SploitScan.git
@@ -61,10 +67,10 @@ jobs:
           echo "Sending Nmap vuln scan report to Discord."
           curl -H "Content-Type: multipart/form-data" \
                -F "payload_json={\"content\": \"Nmap Vuln Scan Report.\"}" \
-               -F "file=@nmap-report1.xml" \
+               -F "file=@nmap-report1.html" \
                ${{ secrets.DISCORD_WEBHOOK }}
           echo "Sending Nmap vulners scan report to Discord."
           curl -H "Content-Type: multipart/form-data" \
                -F "payload_json={\"content\": \"Nmap Vulners Scan Report.\"}" \
-               -F "file=@nmap-report2.xml" \
+               -F "file=@nmap-report2.html" \
                ${{ secrets.DISCORD_WEBHOOK }}
