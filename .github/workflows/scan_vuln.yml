@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "Advanced scanning on main domain"
           nikto -h https://main.d3jn59dldttup9.amplifyapp.com \
-                -output nikto-advanced-report.html \
+                -output nikto-report.html \
                 -Format htm \
                 -Tuning 4,7,8,9,d \
                 -FollowRedirects \
