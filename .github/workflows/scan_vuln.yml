@@ -32,19 +32,19 @@ jobs:
         run: |
           sudo apt-get install -y nmap
 
-      - name: Nmap Scan and Export to JSON
+      - name: Nmap Scan and Export to XML
         run: |
           echo "Scanning with Nmap"
           nmap -sV --script vulners -oX nmap-report.xml https://main.d3jn59dldttup9.amplifyapp.com/welcome
-          python3 -c "import xml.etree.ElementTree as ET; import json; print(json.dumps(ET.tostring(ET.parse('nmap-report.xml').getroot()).decode(), indent=4))" > nmap-report.json
+          cat nmap-report.xml
 
-      - name: Convert JSON to CSV using SploitScan
-        run: |
-          git clone https://github.com/xaitax/SploitScan.git
-          cd SploitScan
-          pip3 install -r requirements.txt
-          python3 sploitscan.py -e csv -i ../nmap-report.json nmap-report.csv
-          cd ..
+      # - name: Convert JSON to CSV using SploitScan
+      #   run: |
+      #     git clone https://github.com/xaitax/SploitScan.git
+      #     cd SploitScan
+      #     pip3 install -r requirements.txt
+      #     python3 sploitscan.py -e csv -i ../nmap-report.json nmap-report.csv
+      #     cd ..
 
       - name: Send Nikto HTML Report to Discord
         run: |
@@ -57,5 +57,5 @@ jobs:
         run: |
           curl -H "Content-Type: multipart/form-data" \
                -F "payload_json={\"content\": \"Nmap Scan Report Exported to HTML.\"}" \
-               -F "file=@nmap-report.csv" \
+               -F "file=@nmap-report.xml" \
                ${{ secrets.DISCORD_WEBHOOK }}
