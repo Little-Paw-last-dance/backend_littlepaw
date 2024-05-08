@@ -17,15 +17,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nikto
 
-      - name: Nikto Scan with Specific Tuning Options
+      - name: Nikto Scan with Custom Options
         run: |
-          echo "Scanning main domain with specific tuning options"
-          nikto -h https://main.d3jn59dldttup9.amplifyapp.com/welcome -output nikto-report.html -Format htm -Tuning 24789d
+          echo "Scanning with custom options"
+          nikto -Display 1234EP -o nikto-report.html -Format htm -Tuning 123bde -host https://main.d3jn59dldttup9.amplifyapp.com/welcome
           cat nikto-report.html
 
       - name: Modify HTML Report Title
         run: |
-          sed -i 's|<table class="headerTable" width="300"><tr><td>main.d3jn59dldttup9.amplifyapp.com / 18.165.98.62 port 443</td></tr></table>|<table class="headerTable" width="300"><tr><td>Escaneo de vulnerabilidades de la página: main.d3jn59dldttup9.amplifyapp.com / IP: 18.165.98.62, Puerto: 443</td></tr></table>|' nikto-report.html
+          sed -i 's|<table class="headerTable" width="300"><tr><td>.*</td></tr></table>|<table class="headerTable" width="300"><tr><td>Vulnerabilidades de la página main.d3jn59dldttup9.amplifyapp.com / IP: 18.165.98.62, Puerto: 443</td></tr></table>|' nikto-report.html
           echo "HTML title updated."
 
       - name: Send HTML Report to Discord
