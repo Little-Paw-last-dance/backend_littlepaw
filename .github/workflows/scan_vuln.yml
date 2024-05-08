@@ -20,15 +20,9 @@ jobs:
       - name: Nikto Scan with Specific Tuning Options
         run: |
           echo "Scanning main domain with specific tuning options"
-          nikto -h https://main.d3jn59dldttup9.amplifyapp.com \
-                -output nikto-report.html \
-                -Format htm \
-                -Tuning 4789d \
-                -FollowRedirects \
-                -Display "V,E" \
-                -ssl \
-                -Evasion 1
-          echo "Scan output:"
+          nikto -h https://main.d3jn59dldttup9.amplifyapp.com -output nikto-report.html -Format htm \
+                -Tuning 4897a2d \
+                -FollowRedirects -ssl -Display V
           cat nikto-report.html
 
       - name: Send HTML Report to Discord
