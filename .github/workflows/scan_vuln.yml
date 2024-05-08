@@ -57,5 +57,5 @@ jobs:
         run: |
           curl -H "Content-Type: multipart/form-data" \
                -F "payload_json={\"content\": \"Nmap Scan Report Exported to HTML.\"}" \
-               -F "file=@nmap-report.html" \
+               -F "file=@nmap-report.csv" \
                ${{ secrets.DISCORD_WEBHOOK }}
