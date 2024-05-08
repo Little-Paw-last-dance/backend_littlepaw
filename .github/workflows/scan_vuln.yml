@@ -28,9 +28,26 @@ jobs:
           sed -i 's|<table class="headerTable" width="300"><tr><td>.*</td></tr></table>|<table class="headerTable" width="300"><tr><td>Vulnerabilidades de la página main.d3jn59dldttup9.amplifyapp.com / IP: 18.165.98.62, Puerto: 443</td></tr></table>|' nikto-report.html
           echo "HTML title updated."
 
-      - name: Send HTML Report to Discord
+      - name: Install Nmap
+        run: |
+          sudo apt-get install -y nmap
+
+      - name: Nmap Scan and Export to JSON
+        run: |
+          echo "Scanning with Nmap"
+          nmap -sV --script vulners -oX nmap-report.xml https://main.d3jn59dldttup9.amplifyapp.com/welcome
+          python3 -c "import xml.etree.ElementTree as ET; import json; print(json.dumps(ET.tostring(ET.parse('nmap-report.xml').getroot()).decode(), indent=4))" > nmap-report.json
+
+      - name: Send Nikto HTML Report to Discord
         run: |
           curl -H "Content-Type: multipart/form-data" \
                -F "payload_json={\"content\": \"Nikto Scan Report with Specific Tuning Options Attached.\"}" \
                -F "file=@nikto-report.html" \
+               ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Send Nmap HTML Report to Discord
+        run: |
+          curl -H "Content-Type: multipart/form-data" \
+               -F "payload_json={\"content\": \"Nmap Scan Report Exported to HTML.\"}" \
+               -F "file=@nmap-report.html" \
                ${{ secrets.DISCORD_WEBHOOK }}
