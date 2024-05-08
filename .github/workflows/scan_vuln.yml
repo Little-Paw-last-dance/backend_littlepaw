@@ -1,0 +1,43 @@
+name: Scan Vulnerabilities and Send Report to Discord
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  report_to_discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nikto and Gobuster
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nikto gobuster
+
+      - name: Download Wordlist
+        run: |
+          curl -L -o wordlist.txt https://raw.githubusercontent.com/v0re/dirb/master/wordlists/common.txt
+
+      - name: Discover Subdomains with Gobuster
+        run: |
+          gobuster dns -d ${{ secrets.MAIN_DOMAIN }} -w wordlist.txt -o subdomains.txt
+
+      - name: Nikto Scan on Main Domain and Subdomains
+        run: |
+          echo "Scanning main domain: ${{ secrets.MAIN_DOMAIN }}"
+          nikto -h ${{ secrets.MAIN_DOMAIN }} -output main-nikto-report.html -Format htm
+          while read subdomain; do
+            echo "Scanning subdomain: $subdomain"
+            nikto -h $subdomain -output "${subdomain//./_}-nikto-report.html" -Format htm
+          done < subdomains.txt
+          cat *.html > combined-report.html
+
+      - name: Send HTML Report to Discord
+        run: |
+          curl -H "Content-Type: multipart/form-data" \
+               -F "payload_json={\"content\": \"Nikto Scan Report Attached.\"}" \
+               -F "file=@combined-report.html" \
+               ${{ secrets.DISCORD_WEBHOOK }}
