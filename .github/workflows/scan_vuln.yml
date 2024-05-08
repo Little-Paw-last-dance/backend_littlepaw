@@ -28,9 +28,9 @@ jobs:
           sed -i 's|<table class="headerTable" width="300"><tr><td>.*</td></tr></table>|<table class="headerTable" width="300"><tr><td>Vulnerabilidades de la página main.d3jn59dldttup9.amplifyapp.com / IP: 18.165.98.62, Puerto: 443</td></tr></table>|' nikto-report.html
           echo "HTML title updated."
 
-      - name: Install Nmap
+      - name: Install Nmap and XSLTProc
         run: |
-          sudo apt-get install -y nmap
+          sudo apt-get install -y nmap xsltproc
 
       - name: Nmap Scan and Export to XML
         run: |
