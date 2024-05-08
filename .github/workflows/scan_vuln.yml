@@ -34,9 +34,12 @@ jobs:
 
       - name: Nmap Scan and Export to XML
         run: |
-          echo "Scanning with Nmap"
-          nmap -sV --script vulners -oX nmap-report.xml https://main.d3jn59dldttup9.amplifyapp.com/welcome
-          cat nmap-report.xml
+          echo "Scanning with Nmap using default vuln script"
+          nmap -sV --script vuln -oX nmap-report1.xml main.d3jn59dldttup9.amplifyapp.com
+          echo "Nmap vuln scan report generated."
+          echo "Scanning with Nmap using vulners script"
+          nmap -sV --script vulners -oX nmap-report2.xml main.d3jn59dldttup9.amplifyapp.com
+          echo "Nmap vulners scan report generated."
 
       # - name: Convert JSON to CSV using SploitScan
       #   run: |
@@ -53,9 +56,15 @@ jobs:
                -F "file=@nikto-report.html" \
                ${{ secrets.DISCORD_WEBHOOK }}
 
-      - name: Send Nmap HTML Report to Discord
+      - name: Send Nmap Reports to Discord
         run: |
+          echo "Sending Nmap vuln scan report to Discord."
           curl -H "Content-Type: multipart/form-data" \
-               -F "payload_json={\"content\": \"Nmap Scan Report Exported to HTML.\"}" \
-               -F "file=@nmap-report.xml" \
+               -F "payload_json={\"content\": \"Nmap Vuln Scan Report.\"}" \
+               -F "file=@nmap-report1.xml" \
+               ${{ secrets.DISCORD_WEBHOOK }}
+          echo "Sending Nmap vulners scan report to Discord."
+          curl -H "Content-Type: multipart/form-data" \
+               -F "payload_json={\"content\": \"Nmap Vulners Scan Report.\"}" \
+               -F "file=@nmap-report2.xml" \
                ${{ secrets.DISCORD_WEBHOOK }}
