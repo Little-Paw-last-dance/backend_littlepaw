@@ -1,4 +1,51 @@
 # Backend Little Paw
+## Instalacion
+### Clonar el repositorio
+```bash
+git clone https://github.com/Little-Paw-last-dance/backend_littlepaw.git
+```
+
+### Instalar dependencias
+```bash
+cd backend_littlepaw
+npm install
+```
+
+### Configurar variables de entorno
+En el proyecto existe un archivo `.env.example` que contiene las variables de entorno necesarias para la configuración de la aplicación. Debes crear un archivo `.env` en la raíz del proyecto y configurar las siguientes variables:
+```env
+FIREBASE_TYPE=
+FIREBASE_PROJECT_ID=
+FIREBASE_PRIVATE_KEY_ID=
+FIREBASE_PRIVATE_KEY=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_CLIENT_ID=
+FIREBASE_AUTH_URI=
+FIREBASE_TOKEN_URI=
+FIREBASE_AUTH_PROVIDER_X509_CERT_URL=
+FIREBASE_CLIENT_X509_CERT_URL=
+FIREBASE_UNIVERSE_DOMAIN=
+MYSQL_HOST=
+MYSQL_PORT=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_DATABASE=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=
+AWS_BUCKET_NAME=
+```
+
+### Iniciar la aplicación
+```bash
+npm run build
+npm run dev
+```
+
+La aplicación se ejecutará en el puerto `8000` por defecto. Puedes acceder a la API en `http://localhost:8000`.
+
+## Descripción
+El backend de Little Paw es una API RESTful que proporciona servicios para la gestión de mascotas, refugios y usuarios. La aplicación está diseñada para ser escalable y fácil de mantener, con una estructura modular y bien organizada que facilita la adición de nuevas funcionalidades y la expansión del alcance del proyecto.
 
 ## Estructura del Proyecto
 ### src/config
@@ -42,8 +89,6 @@ import logger from './config/logger';
 logger.info('Mensaje informativo');
 logger.error('Mensaje de error');
 ```
-
-
 
 ### src/controller
 Los controladores en [`src/controller`](src/controller/) gestionan las interacciones entre la API y los servicios, organizando la lógica de negocio según los diferentes recursos de la aplicación.
@@ -400,8 +445,123 @@ El archivo [`shelterRepository.ts`](/src/repository/shelterRepository.ts) es enc
   - `getAllShelters`: Obtiene todos los refugios registrados.
   - `deleteShelter`: Elimina un refugio.
 
-### src/route
+### src/service
+El directorio [`src/service`](/src/service/) contiene lógica de negocio y funciones de servicio que se utilizan en los controladores para realizar operaciones específicas.
 
+#### userService
+En el archivo [`userService.ts`](/src/service/userService.ts) proporciona servicios para manejar operaciones relacionadas con usuarios, incluyendo el registro, la actualización y la obtención de información de usuarios.
+  - **Métodos Principales**:
+    - `registerUserWithRoles`: Registra un usuario y asigna roles específicos.
+    - `registerUser`: Registra un usuario sin roles específicos.
+    - `getUserInfo`: Obtiene información detallada de un usuario.
+    - `updateUserInfo`: Actualiza los datos de un usuario existente.
+    - `deleteUserInfo`: Elimina un usuario del sistema.
+
+#### petService
+El archivo: [`petService.ts`](/src/service/petService.ts) ofrece servicios para crear y gestionar publicaciones sobre mascotas, así como para asignar mascotas a refugios.
+  - **Métodos Principales**:
+    - `postAPet`: Publica una nueva mascota.
+    - `postAPetToShelter`: Asigna y publica una mascota a un refugio.
+    - `getAllShelterPets`: Obtiene todas las mascotas de un refugio específico.
+    - `getAllPets`: Recupera todas las publicaciones de mascotas.
+
+#### shelterService
+El archivo: [`shelterService.ts`](/src/service/shelterService.ts) administra las operaciones relacionadas con los refugios, como el registro, actualización y eliminación de refugios, y la obtención de información de refugios.
+  - **Métodos Principales**:
+    - `registerAShelter`: Registra un nuevo refugio.
+    - `updateAShelter`: Actualiza los datos de un refugio existente.
+    - `getAShelterById`: Recupera un refugio por su identificador.
+    - `getAllTheShelters`: Obtiene todos los refugios registrados.
+    - `deleteAShelter`: Elimina un refugio del sistema.
+
+### src/utils
+El directorio [`src/utils`](/src/utils/) contiene funciones y utilidades auxiliares que se utilizan en todo el proyecto para tareas comunes y operaciones de uso general.
+
+#### util
+- Archivo: [`util.ts`](/src/util/util.ts)
+  - **Descripción**: Proporciona funciones auxiliares para manejar operaciones comunes como la manipulación de datos URI y la gestión de archivos en AWS S3.
+  - **Funciones Principales**:
+    - `extractDataFromURI`: Extrae el string en base64 y el tipo MIME de una URI de datos.
+    - `uploadFilesB64AndReturnPaths`: Sube archivos codificados en base64 a AWS S3 y devuelve las rutas de los archivos.
+    - `deleteFiles`: Elimina una lista de archivos de AWS S3 basándose en sus rutas.
+
+### src/validation
+El directorio [`src/validation`](/src/validation/) contiene validaciones de datos para las solicitudes de la API, asegurando que los datos proporcionados sean correctos y cumplan con los requisitos de la aplicación.
+
+#### petPostValidation
+El archivo [`petPostValidation.ts`](/src/validation/petPostValidation.ts) valida los datos de una solicitud para publicar una mascota, asegurándose de que todos los campos necesarios estén presentes y sean correctos.
+  - **Validaciones**:
+    - `name`, `age`, `sex`, `breed`, `description`, `type`: Campos definidos y validados.
+    - `photos`: Asegura que se incluya al menos una foto y no más de cinco.
+
+#### shelterRegisterValidation
+El archivo [`shelterRegisterValidation.ts`](/src/validation/shelterRegisterValidation.ts) valida los datos para el registro de un refugio, verificando que todos los campos requeridos estén presentes.
+  - **Validaciones**:
+    - Todos los campos (`name`, `location`, `urlPage`, `countryCode`, `phone`, `photo`) son obligatorios.
+
+#### shelterUpdateValidation
+El archivo [`shelterUpdateValidation.ts`](/src/validation/shelterUpdateValidation.ts) proporciona validaciones para la actualización de los datos de un refugio, con ciertos campos opcionales.
+  - **Validaciones**:
+    - `countryCode`: Debe ser un número si se proporciona.
+
+#### userRegisterValidation
+El archivo [`userRegisterValidation.ts`](/src/validation/userRegisterValidation.ts) valida la información proporcionada para el registro de un usuario, asegurando que todos los campos necesarios sean correctos y estén presentes.
+  - **Validaciones**:
+    - `password`: Longitud mínima de 8 caracteres.
+    - Todos los demás campos son obligatorios y deben cumplir con sus respectivos tipos de datos.
+
+#### userRegisterWithRolesValidation
+El archivo [`userRegisterWithRolesValidation.ts`](/src/validation/userRegisterWithRolesValidation.ts) valida los datos para registrar un usuario que incluye roles específicos, verificando la correcta definición de cada campo.
+  - **Validaciones**:
+    - `roles`: Deben ser un array de strings.
+    - `password`: Longitud mínima de 8 caracteres.
+    - Todos los demás campos son obligatorios.
+
+#### userUpdateValidation
+El rchivo [`userUpdateValidation.ts`](/src/validation/userUpdateValidation.ts) valida la actualización de información de un usuario, permitiendo que algunos campos sean opcionales pero validados si están presentes.
+  - **Validaciones**:
+    - `countryCode`, `age`: Deben ser números si se proporcionan.
+    - Los demás campos son opcionales.
+
+## Autores
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/camgany">
+            <img src="https://avatars.githubusercontent.com/u/84194948?v=4" width="50;" alt="camgany"/>
+            <br />
+            <sub><b>Camila Alejandra Grandy Camacho</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/NatiBilbao">
+            <img src="https://avatars.githubusercontent.com/u/49278336?v=4" width="50;" alt="camgany"/>
+            <br />
+            <sub><b>Natalia Bilbao Cano</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/MarcosHT4">
+            <img src="https://avatars.githubusercontent.com/u/80705427?v=4" width="50;" alt="MarcosHT4"/>
+            <br />
+            <sub><b>Marcos Andres Simon Agreda</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/ElJoamy">
+            <img src="https://avatars.githubusercontent.com/u/68487005?v=4" width="50;" alt="ElJoamy"/>
+            <br />
+            <sub><b>Joseph Anthony Meneses Salguero</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Dylan-Chambi">
+            <img src="https://avatars.githubusercontent.com/u/82673278?v=4" width="50;" alt="Dylan-Chambi"/>
+            <br />
+            <sub><b>Dylan Imanol Chambi Frontanilla</b></sub>
+        </a>
+    </td></tr>
+</table>
 
 ## LICENSE
 <!DOCTYPE html>
